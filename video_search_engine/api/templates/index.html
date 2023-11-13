@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload JSON File</title>
+</head>
+<body>
+    <h2>Upload JSON File</h2>
+
+    <form id="jsonForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="jsonFile">Select a JSON file:</label>
+        <input type="file" id="jsonFile" name="jsonFile" accept=".json" required>
+        <br>
+        <button type="button" onclick="uploadJSON()">Upload</button>
+    </form>
+
+    <script>
+        // Get CSRF token
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        function uploadJSON() {
+            const fileInput = document.getElementById('jsonFile');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('jsonFile', file);
+
+                // Use XMLHttpRequest to send the file to Django using POST
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload/', true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));  
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        alert('JSON file uploaded successfully!');
+                    } else {
+                        alert('Error uploading JSON file!');
+                    }
+                };
+                xhr.send(formData);
+            } else {
+                alert('Please select a JSON file!');
+            }
+        }
+    </script>
+</body>
+</html>
