@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #sidePanel {
+            flex: 1;
+            background-color: #000000;
+            overflow-y: auto;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        #searchBar {
+            margin-bottom: 20px;
+        }
+
+        #searchResults {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            color: #0540e2; /* Light text color for search results */
+        }
+
+        #searchResults li {
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        #mainPanel {
+            flex: 3;
+            background-color: #d3cfcf;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 60vh;
+        }
+
+        #videoInfo {
+            margin-top: 20px;
+        }
+
+        #likeButton,
+        #dislikeButton {
+            cursor: pointer;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="sidePanel">
+            <!-- Use a form for the search bar with POST method -->
+            <form id="searchForm" action="{% url 'search_video' %}" method="post">
+                {% csrf_token %}
+                <div id="searchBar">
+                    <label for="query">Search Query:</label>
+                    <input type="text" id="query" name="query" placeholder="Search..." required>
+                    <button type="button" onclick="searchVideos()">Search</button>
+                </div>
+            </form>
+
+            <ul id="searchResults"></ul>
+        </div>
+        <div id="mainPanel">
+            <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+            <div id="videoInfo">
+                <button id="likeButton" onclick="likeVideo(currentVideoId)">
+                    <span id="likeIcon">👍</span> <span id="likeCount">0</span>
+                </button>
+                <button id="dislikeButton" onclick="dislikeVideo(currentVideoId)">
+                    <span id="dislikeIcon">👎</span> <span id="dislikeCount">0</span>
+                </button>
+                <span id="viewsCount">Views: 0</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let viewsCount = 0;
+        let likeCount = 0;
+        let dislikeCount = 0;
+        let liked = false;
+        let disliked = false;
+
+        function searchVideos() {
+            const query = document.getElementById('query').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch("{% url 'search_video' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: `query=${encodeURIComponent(query)}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = '';
+
+                data.results.forEach(video => {
+                    const li = document.createElement('li');
+                    li.textContent = video.videoInfo.snippet.title;
+                    li.addEventListener('click', () => playVideo(video.videoInfo.id));
+                    searchResults.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function playVideo(videoId) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
+            currentVideoId = videoId; 
+            updateViewsCount();
+            // resetLikeDislike();
+        }
+
+        function updateViewsCount() {
+            viewsCount += 1;
+            const viewsCountSpan = document.getElementById('viewsCount');
+            viewsCountSpan.textContent = `Views: ${viewsCount}`;
+        }
+
+        function likeVideo(videoId) {
+            if (!liked && !disliked) {
+                liked = true;
+                likeCount += 1;
+                updateLikeDislikeUI();
+                const likeButton = document.getElementById('likeButton');
+                likeButton.disabled = true;
+                updateVideoData(videoId, 'like');
+            }
+        }
+
+        function dislikeVideo(videoId) {
+            if (!liked && !disliked) {
+                disliked = true;
+                dislikeCount += 1;
+                updateLikeDislikeUI();
+                const dislikeButton = document.getElementById('dislikeButton');
+                dislikeButton.disabled = true;
+                updateVideoData(videoId, 'dislike');
+            }
+        }
+
+        function updateLikeDislikeUI() {
+            const likeCountSpan = document.getElementById('likeCount');
+            const dislikeCountSpan = document.getElementById('dislikeCount');
+            likeCountSpan.textContent = likeCount;
+            dislikeCountSpan.textContent = dislikeCount;
+        }
+
+        // function resetLikeDislike() {
+        //     liked = false;
+        //     disliked = false;
+        //     const likeButton = document.getElementById('likeButton');
+        //     const dislikeButton = document.getElementById('dislikeButton');
+        //     likeButton.textContent = 'Like';
+        //     dislikeButton.textContent = 'Dislike';
+        //     likeButton.disabled = false;
+        //     dislikeButton.disabled = false;
+        // }
+
+        function updateVideoData(videoId, action) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            // console.log(`Updating video data for video ID ${videoId}...`);
+            console.log(videoId)
+            fetch("/update_video_data/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+            },
+            body: `video_id=${encodeURIComponent(videoId)}&action=${encodeURIComponent(action)}`,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Video data updated successfully.');
+                } else {
+                    console.error(`Error updating video data: ${data.error}`);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
