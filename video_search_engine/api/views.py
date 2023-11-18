@@ -9,6 +9,8 @@ from .models import Video
 from json import JSONEncoder
 from django.core.serializers.json import DjangoJSONEncoder
 from bson.objectid import ObjectId
+from django.views.decorators.http import require_GET, require_POST
+from bson import json_util
 
 
 class MongoEncoder(DjangoJSONEncoder):
@@ -16,7 +18,10 @@ class MongoEncoder(DjangoJSONEncoder):
         if isinstance(obj, ObjectId):
             return str(obj)
         return super().default(obj)
-    
+
+def serialize_mongo_document(document):
+    return json_util.dumps(document)
+
 def store_video(request):
     connect_string = settings.MONGO_CONNECTION_STRING
     my_client = MongoClient(connect_string)
@@ -78,6 +83,8 @@ def update_video_data(request):
                     video.likes += 1
                     update = {'$set': {'videoInfo.statistics.likeCount': str(video.likes)}}
                     collection_name.update_one(query, update)
+                    print(video.likes)
+                    print(collection_name.videoInfo.statistics.likeCount)
                 elif action == 'dislike':
                     video.dislikes += 1
                     update = {'$set': {'videoInfo.statistics.dislikeCount': video.dislikes}}
@@ -132,3 +139,30 @@ def search_video(request):
         return JsonResponse(response_data, encoder=MongoEncoder, safe=False)
 
     return render(request, 'youtube.html')
+
+@require_GET
+def get_video_data(request, video_id):
+    connect_string = settings.MONGO_CONNECTION_STRING
+    my_client = MongoClient(connect_string)
+
+    # First define the database name
+    dbname = my_client['Video']
+
+    # Now get/create collection name
+    collection_name = dbname["Set_of_videos"]
+
+    result = collection_name.find_one({'videoInfo.id': video_id})
+    print(result)
+    if result:
+        # return JsonResponse(result, encoder=MongoEncoder, safe=False)
+        video_data = {
+            'videoInfo': {
+                'id': result['videoInfo']['id'],
+                'snippet': result['videoInfo']['snippet'],
+                'statistics': result['videoInfo']['statistics'],
+            }
+            # Add more fields as needed
+        }
+        return JsonResponse({'success': True, 'videoData': video_data})
+    else:
+        return JsonResponse({'error': 'Video not found'}, status=404)

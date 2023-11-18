@@ -35,12 +35,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f8f8f8;
-            border: 1px solid #d3d3d3;
+            background-color: #ffffff;
+            border: 1.5px solid #ff0000;
             border-radius: 100px;
             padding: 5px;
             margin-bottom: 20px;
-            color: #000000;
+            color: #ffffff;
             margin-top: 15px;
         }
 
@@ -49,7 +49,7 @@
             border: none;
             outline: none;
             font-size: 16px;
-        }
+        } 
 
         #searchBar button {
             background-color: #f8f8f8;
@@ -80,12 +80,13 @@
             overflow: hidden;
             padding: 20px;
             overflow-y: auto;
+            margin-top: 0px;
         }
 
         #videoPlayer {
             width: 100%;
             height: 60vh;
-            background-color: #d8d8d8;
+            background-color: #000000;
         }
 
         #videoInfo {
@@ -99,6 +100,9 @@
             align-items: center;
             /* justify-content: right; */
             padding: 15px;
+            float: left; /* Add this line to make it float to the left */
+            width: 63%; /* Set the width to 50% or adjust as needed */
+
         }
 
         #likeButton,
@@ -125,6 +129,10 @@
         color: #ffffff; /* White text color */
         padding: 10px; /* Padding inside the box */
         margin-top: 0px; /* Space above the box */
+        /* width: 60%; */
+        overflow: auto;
+        text-overflow: ellipsis;
+        /* white-space: nowrap; */
     }
 
     #channelBox {
@@ -139,6 +147,7 @@
         border-radius: 100px; /* Rounded corners */
         margin: 0 auto;
         margin-bottom: 20px;
+        /* width: 60%; */
         /* justify-content: center;
         align-items: center; */
     }
@@ -154,6 +163,7 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
+        border: 2px #ffffff;
     }
 
     #logoText {
@@ -161,12 +171,41 @@
         font-style: italic;
         font-weight: bold;
     }
+
+    #profileDiv {
+        /* position: fixed;  */
+        /* top: 0px; 
+        right: 100px;  */
+        color: #ffffff; 
+        display: flex; 
+        align-items: center;
+        justify-content: center;
+        background-color: #000000;
+        border: 1px solid #ffffff;
+        border-radius: 100px;
+        width: 150px;
+        margin-bottom: 0px;
+        padding: 2px;
+        margin-top: 0px;
+    }
+
+    #suggestion {
+        flex: 1;
+        background-color: #000000;
+        overflow-y: auto;
+        padding: 0px;
+        color: #ffffff;
+        margin-top: 0px;
+        float: right; /* Add this line to make it float to the right */
+        width: 33%; /* Set the width to 50% or adjust as needed */
+    }
     </style>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-xxx" crossorigin="anonymous" /> -->
+
 </head>
 <body>
     <div id="container">
         <div id="sidePanel">
-            <!-- Use a form for the search bar with POST method -->
             <div id="logoContainer">
                 <img id="logo" src="https://i.ibb.co/F8y9jvc/images.png" alt="Logo" width="50" height="50">
                 <span id="logoText">VIDEO PLAYER</span>
@@ -174,7 +213,6 @@
             <form id="searchForm" action="{% url 'search_video' %}" method="post">
                 {% csrf_token %}
                 <div id="searchBar">
-                    <!-- <label for="query">Search Query:</label> -->
                     <input type="text" id="query" name="query" placeholder="Search videos..." required>
                     <button type="button" onclick="searchVideos()" style="font-size: 12px;">&#128269;</button>
                 </div>
@@ -183,7 +221,25 @@
             <ul id="searchResults"></ul>
         </div>
         <div id="mainPanel">
-            <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+            <!-- <a href="{% url 'store_video' %}" id="profileLink" style="position: absolute; top: 10px; right: 10px; color: #ffffff; text-decoration: none;">
+                <img src="https://i.ibb.co/r6Ng54v/770079-people-512x512.png" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%;">
+            </a> -->
+            <div id="profileDiv">
+
+                <!-- Profile icon (replace 'path-to-your-image' with the actual path to your profile picture) -->
+                <!-- <img src="https://i.ibb.co/r6Ng54v/770079-people-512x512.png" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;"> -->
+        
+                <!-- Text next to the profile icon -->
+                <a href="{% url 'store_video' %}" id="profileLink" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <!-- Text next to the profile icon -->
+                    Rishav Aich <!-- Replace with the actual text you want to display -->
+
+                    <img src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px; margin-left: 5px;">
+                </a>
+            </div>
+            <div style="margin-top: 10px;">
+                <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
             <!-- <div id="channelBox">
                 <span id="channelName"></span>
             </div> -->
@@ -200,13 +256,23 @@
                     </button>
                     <span id="viewsCount">Views: 0</span>
                 </div>
-            </div>
+            
             <div id="videoDetails">
                 <h2 id="videoTitle"></h2>
                 <p id="videoDescription"></p>
             </div>
+
         </div>
+
+        <div id="suggestion">
+            <h3 style="text-align: center;">Suggestions</h3>
+        
+        </div>
+
+        </div>
+
     </div>
+    
     <script>
         let viewsCount = 0;
         let likeCount = 0;
@@ -250,23 +316,24 @@
             const videoPlayer = document.getElementById('videoPlayer');
             videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
             currentVideoId = videoId; 
-            views = viewsCount;
-            like = likeCount;
-            dislike = dislikeCount;
-            document.getElementById("likeCount").innerText = like;
-            document.getElementById("dislikeCount").innerText = dislike;
-            document.getElementById('videoTitle').textContent = title;
-            document.getElementById('videoDescription').textContent = description;
-            document.getElementById('channelName').textContent = channelName;
+            updateVideoDataFromServer(videoId);
+            // views = viewsCount;
+            // like = likeCount;
+            // dislike = dislikeCount;
+            // document.getElementById("likeCount").innerText = like;
+            // document.getElementById("dislikeCount").innerText = dislike;
+            // document.getElementById('videoTitle').textContent = title;
+            // document.getElementById('videoDescription').textContent = description;
+            // document.getElementById('channelName').textContent = channelName;
          
-            // document.getElementById("viewsCount").innerText = `Views: ${views}`;
-            console.log(videoId);
-            console.log(viewsCount);
-            console.log(likeCount);
-            console.log(dislikeCount);
-            likeButton.disabled=false;
-            dislikeButton.disabled=false;
-            updateViewsCount(views);
+            // // document.getElementById("viewsCount").innerText = `Views: ${views}`;
+            // console.log(videoId);
+            // console.log(viewsCount);
+            // console.log(likeCount);
+            // console.log(dislikeCount);
+            // likeButton.disabled=false;
+            // dislikeButton.disabled=false;
+            // updateViewsCount(views);
             // resetLikeDislike();
         }
 
@@ -321,7 +388,6 @@
         //     likeButton.disabled = false;
         //     dislikeButton.disabled = false;
         // }
-
         function updateVideoData(videoId, action) {
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             // console.log(`Updating video data for video ID ${videoId}...`);
@@ -344,6 +410,62 @@
             })
             .catch(error => console.error('Error:', error));
         }
+
+    function updateVideoDataFromServer(videoId) {
+        console.log(videoId);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/get_video_data/${encodeURIComponent(videoId)}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+            // Update your JSON with the new data
+            const videoData = data.videoData; // Modify this based on your actual response structure
+            console.log('Video data fetched successfully:', videoData);
+            // Update your JSON here using the fetched data
+            const statistics = videoData.videoInfo.statistics;
+            const snippet = videoData.videoInfo.snippet;
+
+            views = statistics.viewCount;
+            like = statistics.likeCount;
+            dislike = statistics.dislikeCount;
+            title = snippet.title;
+            description = snippet.description;
+            channelName = snippet.channelTitle;
+
+            console.log(views);
+            console.log(like);
+            console.log(dislike);
+            console.log(title);
+            console.log(description);
+            console.log(channelName);
+
+            document.getElementById("likeCount").innerText = like;
+            document.getElementById("dislikeCount").innerText = dislike;
+            document.getElementById('videoTitle').textContent = title;
+            document.getElementById('videoDescription').textContent = description;
+            document.getElementById('channelName').textContent = channelName;
+
+            console.log(videoId);
+            console.log(viewsCount);
+            console.log(likeCount);
+            console.log(dislikeCount);
+            likeButton.disabled = false;
+            dislikeButton.disabled = false;
+            updateViewsCount(views);
+        } else {
+            console.error(`Error fetching video data: ${data.error}`);
+        }
+        })
+        .catch(error => console.error('Error:', error));
+        }
+
     </script>
 </body>
 </html>
