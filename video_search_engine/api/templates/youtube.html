@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,8 +27,39 @@
             color: #ffffff;
         }
 
-        #searchBar {
+        /* #searchBar {
             margin-bottom: 20px;
+        } */
+
+        #searchBar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f8f8;
+            border: 1px solid #d3d3d3;
+            border-radius: 100px;
+            padding: 5px;
+            margin-bottom: 20px;
+            color: #000000;
+            margin-top: 15px;
+        }
+
+        #searchBar input[type="text"] {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #searchBar button {
+            background-color: #f8f8f8;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        #searchBar button:hover {
+            background-color: #d3d3d3;
         }
 
         #searchResults {
@@ -44,37 +76,107 @@
 
         #mainPanel {
             flex: 3;
-            background-color: #d3cfcf;
+            background-color:#ff0000;
             overflow: hidden;
             padding: 20px;
+            overflow-y: auto;
         }
 
         #videoPlayer {
             width: 100%;
             height: 60vh;
+            background-color: #d8d8d8;
         }
 
         #videoInfo {
-            margin-top: 20px;
+            display: none;
+            margin-top: 0px;
+            background-color: #000000;
+            color: #ffffff;
+            /* align-items: center; */
+            /* display: flex; */
+            justify-content: center;
+            align-items: center;
+            /* justify-content: right; */
+            padding: 15px;
         }
 
         #likeButton,
         #dislikeButton {
             cursor: pointer;
             margin-right: 20px;
+            /* background-color: transparent; */
+            font-size: 15px;
+
         }
+
+        #searchResults li {
+        margin-bottom: 10px;
+        cursor: pointer;
+        border: 1px solid #ffffff; /* Border color */
+        padding: 10px; /* Padding inside the box */
+        border-radius: 5px; /* Rounded corners */
+        margin: 10px 0;
+    }
+
+    #videoDetails {
+        display: none;
+        background-color: #000000; /* Greyish color */
+        color: #ffffff; /* White text color */
+        padding: 10px; /* Padding inside the box */
+        margin-top: 0px; /* Space above the box */
+    }
+
+    #channelBox {
+        display: flex;
+        margin-top: 0px;
+        background-color: #000000;
+        color: #ffffff;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ffffff; /* Border color */
+        border-radius: 100px; /* Rounded corners */
+        margin: 0 auto;
+        margin-bottom: 20px;
+        /* justify-content: center;
+        align-items: center; */
+    }
+
+    #videoStats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    #logoContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    #logoText {
+        font-size: 20px;
+        font-style: italic;
+        font-weight: bold;
+    }
     </style>
 </head>
 <body>
     <div id="container">
         <div id="sidePanel">
             <!-- Use a form for the search bar with POST method -->
+            <div id="logoContainer">
+                <img id="logo" src="https://i.ibb.co/F8y9jvc/images.png" alt="Logo" width="50" height="50">
+                <span id="logoText">VIDEO PLAYER</span>
+            </div>
             <form id="searchForm" action="{% url 'search_video' %}" method="post">
                 {% csrf_token %}
                 <div id="searchBar">
-                    <label for="query">Search Query:</label>
-                    <input type="text" id="query" name="query" placeholder="Search..." required>
-                    <button type="button" onclick="searchVideos()">Search</button>
+                    <!-- <label for="query">Search Query:</label> -->
+                    <input type="text" id="query" name="query" placeholder="Search videos..." required>
+                    <button type="button" onclick="searchVideos()" style="font-size: 12px;">&#128269;</button>
                 </div>
             </form>
 
@@ -82,18 +184,29 @@
         </div>
         <div id="mainPanel">
             <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+            <!-- <div id="channelBox">
+                <span id="channelName"></span>
+            </div> -->
             <div id="videoInfo">
-                <button id="likeButton" onclick="likeVideo(currentVideoId)">
-                    <span id="likeIcon">👍</span> <span id="likeCount">0</span>
-                </button>
-                <button id="dislikeButton" onclick="dislikeVideo(currentVideoId)">
-                    <span id="dislikeIcon">👎</span> <span id="dislikeCount">0</span>
-                </button>
-                <span id="viewsCount">Views: 0</span>
+                <div id="channelBox">
+                    <span id="channelName"></span>
+                </div>
+                <div id="videoStats">
+                    <button id="likeButton" onclick="likeVideo(currentVideoId, like)">
+                        <span id="likeIcon">👍</span> <span id="likeCount">0</span>
+                    </button>
+                    <button id="dislikeButton" onclick="dislikeVideo(currentVideoId, dislike)">
+                        <span id="dislikeIcon">👎</span> <span id="dislikeCount">0</span>
+                    </button>
+                    <span id="viewsCount">Views: 0</span>
+                </div>
+            </div>
+            <div id="videoDetails">
+                <h2 id="videoTitle"></h2>
+                <p id="videoDescription"></p>
             </div>
         </div>
     </div>
-    
     <script>
         let viewsCount = 0;
         let likeCount = 0;
@@ -121,55 +234,82 @@
                 data.results.forEach(video => {
                     const li = document.createElement('li');
                     li.textContent = video.videoInfo.snippet.title;
-                    li.addEventListener('click', () => playVideo(video.videoInfo.id));
+                    li.addEventListener('click', () => {
+                        playVideo(video.videoInfo.id, video.videoInfo.statistics.viewCount, video.videoInfo.statistics.likeCount, video.videoInfo.statistics.dislikeCount, video.videoInfo.snippet.title, video.videoInfo.snippet.description, video.videoInfo.snippet.channelTitle);
+                        document.getElementById('videoInfo').style.display = 'block';
+                        document.getElementById('videoDetails').style.display = 'block';
+                        // document.getElementById('channelBox').style.display = 'block';
+                    });
                     searchResults.appendChild(li);
                 });
             })
             .catch(error => console.error('Error:', error));
         }
 
-        function playVideo(videoId) {
+        function playVideo(videoId, viewsCount, likeCount, dislikeCount, title, description, channelName) {
             const videoPlayer = document.getElementById('videoPlayer');
             videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
             currentVideoId = videoId; 
-            updateViewsCount();
+            views = viewsCount;
+            like = likeCount;
+            dislike = dislikeCount;
+            document.getElementById("likeCount").innerText = like;
+            document.getElementById("dislikeCount").innerText = dislike;
+            document.getElementById('videoTitle').textContent = title;
+            document.getElementById('videoDescription').textContent = description;
+            document.getElementById('channelName').textContent = channelName;
+         
+            // document.getElementById("viewsCount").innerText = `Views: ${views}`;
+            console.log(videoId);
+            console.log(viewsCount);
+            console.log(likeCount);
+            console.log(dislikeCount);
+            likeButton.disabled=false;
+            dislikeButton.disabled=false;
+            updateViewsCount(views);
             // resetLikeDislike();
         }
 
-        function updateViewsCount() {
+        function updateViewsCount(view) {
             viewsCount += 1;
-            const viewsCountSpan = document.getElementById('viewsCount');
-            viewsCountSpan.textContent = `Views: ${viewsCount}`;
+            document.getElementById("viewsCount").innerText = `Views: ${view+1}`;
+            // const viewsCountSpan = document.getElementById('viewsCount');
+            // viewsCountSpan.textContent = `Views: ${viewsCount}`;
         }
 
-        function likeVideo(videoId) {
+        function likeVideo(videoId, like) {
             if (!liked && !disliked) {
                 liked = true;
                 likeCount += 1;
-                updateLikeDislikeUI();
-                const likeButton = document.getElementById('likeButton');
+                console.log(parseInt(like)+1);
+                document.getElementById("likeCount").innerText = parseInt(like)+1;
+                // updateLikeDislikeUI();
+                // const likeButton = document.getElementById('likeButton');
                 likeButton.disabled = true;
+                dislikeButton.disabled = true;
                 updateVideoData(videoId, 'like');
             }
         }
 
-        function dislikeVideo(videoId) {
+        function dislikeVideo(videoId, dislike) {
             if (!liked && !disliked) {
                 disliked = true;
                 dislikeCount += 1;
-                updateLikeDislikeUI();
-                const dislikeButton = document.getElementById('dislikeButton');
+                document.getElementById("dislikeCount").innerText = dislike+1;
+                // updateLikeDislikeUI();
+                // const dislikeButton = document.getElementById('dislikeButton');
                 dislikeButton.disabled = true;
+                likeButton.disabled = true;
                 updateVideoData(videoId, 'dislike');
             }
         }
 
-        function updateLikeDislikeUI() {
-            const likeCountSpan = document.getElementById('likeCount');
-            const dislikeCountSpan = document.getElementById('dislikeCount');
-            likeCountSpan.textContent = likeCount;
-            dislikeCountSpan.textContent = dislikeCount;
-        }
+        // function updateLikeDislikeUI() {
+        //     const likeCountSpan = document.getElementById('likeCount');
+        //     const dislikeCountSpan = document.getElementById('dislikeCount');
+        //     likeCountSpan.textContent = likeCount;
+        //     dislikeCountSpan.textContent = dislikeCount;
+        // }
 
         // function resetLikeDislike() {
         //     liked = false;
@@ -186,7 +326,7 @@
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             // console.log(`Updating video data for video ID ${videoId}...`);
             console.log(videoId)
-            fetch("/update_video_data/", {
+            fetch("/update/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

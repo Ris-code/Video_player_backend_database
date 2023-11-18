@@ -154,3 +154,5 @@ DATABASES = {
         'TEST_NAME': 'test_neo4j_database',
     },
 }
+
+STATIC_URL = 'static/'
