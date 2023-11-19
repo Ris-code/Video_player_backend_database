@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,4 +137,22 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MONGO_CONNECTION_STRING = "mongodb+srv://rishav_aich:rishav%402003@test.v0y4koj.mongodb.net/"
+MONGO_CONNECTION_STRING = os.getenv('Connection_string')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
+    },
+    'Video': {
+        'ENGINE': 'django_mongodb_engine',
+        'NAME': 'Video',
+    },
+    'neo4j': {
+        'ENGINE': 'neo4django',
+        'NAME': 'http://localhost:7474/db/data/',
+        'TEST_NAME': 'test_neo4j_database',
+    },
+}
+
+STATIC_URL = 'static/'
