@@ -4,7 +4,7 @@ from django.db import models
 
 class Video(models.Model):
     title = models.CharField(max_length=200)
-    video_id = models.CharField(max_length=200, unique=True)
+    video_id = models.CharField(max_length=200, unique=True, primary_key=True)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)

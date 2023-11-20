@@ -1,0 +1,154 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h2 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container {
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; */
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    height: 60vh;
+    width: 100%;
+}
+
+.personal-details, .forms-container {
+    flex: 1;
+    margin: 20px;
+}
+
+.personal-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    background-color: black;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 0px;
+    color: #ffffff;
+    width: 110%;
+    /* height: 50%; */
+    /* justify-content: space-between;  */
+    margin-top: -50px;
+    font-size: 20px;
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+.forms-container {
+    /* flex: 1; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* margin-top: 10px; */
+}
+
+form {
+    width: 90%;
+    background-color: black;
+    padding: 20px;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    /* color: black; */
+    /* margin-top: 20px; */
+}
+
+label{
+    color: #ffffff;
+}
+input,
+textarea {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    color: #000000;
+    /* border: 1px #ff0000; */
+}
+
+input[type="file"] {
+    border: none;
+}
+
+button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #a0456f;
+}
+
+#jsonForm {
+    margin-top: 20px; 
+    color: #ffffff;/* Adjust as needed */
+}
+
+.personal-details p {
+    margin: 0px 0; /* Adjust as needed */
+}
+
+.detail-box {
+    padding: 5px;
+    margin: 2px 0;
+    border: 1px solid #ff0000;
+    border-radius: 100px; /* Makes the boxes rounded */
+    box-sizing: border-box;
+    width: 70%;
+    text-align: center;
+    background-color: #000000; /* Changes the background color */
+}
+
+.left-side > div {
+    margin-top: 20px; 
+    align-items: center;
+    text-align: center;/* Adjust as needed */
+}
+
+.left-side{
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; */
+    margin-top: -70px;
+    margin-bottom: 0px;
+    /* margin-left: 20px; */
+    margin-right: 20px;
+    padding: 20px;
+    background-color: black;
+    text-align: center;
+    align-items: center;
+
+}
+
+#text {
+    text-align: center;
+}

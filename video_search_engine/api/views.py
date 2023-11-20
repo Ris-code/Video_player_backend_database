@@ -11,8 +11,24 @@ from django.core.serializers.json import DjangoJSONEncoder
 from bson.objectid import ObjectId
 from django.views.decorators.http import require_GET, require_POST
 from bson import json_util
+import hashlib
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
+def generate_id(word):
+    return hashlib.md5(word.encode()).hexdigest()
 
+def connect():
+    connect_string = settings.MONGO_CONNECTION_STRING
+    my_client = MongoClient(connect_string)
+    # my_client = MongoClient('mongodb://localhost:27017/')
+    # First define the database name
+    dbname = my_client['Video']
+
+    # Now get/create collection name
+    collection_name = dbname["Set_of_videos"]
+
+    return collection_name
 class MongoEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, ObjectId):
@@ -23,14 +39,7 @@ def serialize_mongo_document(document):
     return json_util.dumps(document)
 
 def store_video(request):
-    connect_string = settings.MONGO_CONNECTION_STRING
-    my_client = MongoClient(connect_string)
-
-    # First define the database name
-    dbname = my_client['Video']
-
-    # Now get/create collection name
-    collection_name = dbname["Set_of_videos"]
+    collection_name = connect()
 
     if request.method == 'POST':
         # Get the JSON file from the request.FILES dictionary
@@ -59,18 +68,11 @@ def store_video(request):
         else:
             return HttpResponse('No JSON file provided!', status=400)
     else:
-        return render(request, 'index.html')
+        return render(request, 'channel.html')
 
 @csrf_exempt  # Only for demonstration. Use proper CSRF handling in production.
 def update_video_data(request):
-    connect_string = settings.MONGO_CONNECTION_STRING
-    my_client = MongoClient(connect_string)
-
-    # First define the database name
-    dbname = my_client['Video']
-
-    # Now get/create collection name
-    collection_name = dbname["Set_of_videos"]
+    collection_name = connect()
 
     if request.method == 'POST':
         video_id = request.POST.get('video_id', None)
@@ -102,14 +104,7 @@ def update_video_data(request):
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 def search_video(request):
-    connect_string = settings.MONGO_CONNECTION_STRING
-    my_client = MongoClient(connect_string)
-
-    # First define the database name
-    dbname = my_client['Video']
-
-    # Now get/create collection name
-    collection_name = dbname["Set_of_videos"]
+    collection_name = connect()
 
     if request.method == 'POST':
         query = request.POST.get('query', '')
@@ -140,29 +135,68 @@ def search_video(request):
 
     return render(request, 'youtube.html')
 
-@require_GET
-def get_video_data(request, video_id):
-    connect_string = settings.MONGO_CONNECTION_STRING
-    my_client = MongoClient(connect_string)
+# @require_GET
+# def get_video_data(request, video_id):
+#     collection_name = connect()
 
-    # First define the database name
-    dbname = my_client['Video']
+#     result = collection_name.find_one({'videoInfo.id': video_id})
+#     print(result)
+#     if result:
+#         # return JsonResponse(result, encoder=MongoEncoder, safe=False)
+#         video_data = {
+#             'videoInfo': {
+#                 'id': result['videoInfo']['id'],
+#                 'snippet': result['videoInfo']['snippet'],
+#                 'statistics': result['videoInfo']['statistics'],
+#             }
+#             # Add more fields as needed
+#         }
+#         return JsonResponse({'success': True, 'videoData': video_data})
+#     else:
+#         return JsonResponse({'error': 'Video not found'}, status=404)
 
-    # Now get/create collection name
-    collection_name = dbname["Set_of_videos"]
+@csrf_exempt
+def upload_video_details(request):
+    collection_name = connect()
 
-    result = collection_name.find_one({'videoInfo.id': video_id})
-    print(result)
-    if result:
-        # return JsonResponse(result, encoder=MongoEncoder, safe=False)
-        video_data = {
-            'videoInfo': {
-                'id': result['videoInfo']['id'],
-                'snippet': result['videoInfo']['snippet'],
-                'statistics': result['videoInfo']['statistics'],
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        video_id = data.get('videoId')
+        tags = data.get('tags')
+        title = data.get('title')
+        description = data.get('description')
+        
+        l=tags.split(',')
+           # Create a document
+
+        video = Video(title=title, video_id=video_id, likes=0, dislikes=0, views=0)
+        video.save()
+
+        document = {
+            "videoInfo": {
+                "snippet": {
+                "tags": l,
+                "channelId": generate_id('CodeRev'),
+                "channelTitle": "CodeRev",
+                "title": title,
+                "description": description,
+                },
+                "kind": "youtube#video",
+                "statistics": {
+                "commentCount": 0,
+                "viewCount": 0,
+                "favoriteCount": 0,
+                "dislikeCount": 0,
+                "likeCount": "0"
+                },
+                "id": video_id
             }
-            # Add more fields as needed
         }
-        return JsonResponse({'success': True, 'videoData': video_data})
+
+        # Insert the document into the collection
+        collection_name.insert_one(document)
+
+        return JsonResponse({'message': 'Data received successfully'})
+
     else:
-        return JsonResponse({'error': 'Video not found'}, status=404)
+        return JsonResponse({'error': 'Invalid request'}, status=400)
