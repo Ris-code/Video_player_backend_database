@@ -14,6 +14,8 @@ from bson import json_util
 import hashlib
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+import os
+
 
 def generate_id(word):
     return hashlib.md5(word.encode()).hexdigest()
@@ -48,19 +50,19 @@ def store_video(request):
         if json_file:
             try:
                 # Parse the JSON content from the file
-                json_content = json.loads(json_file.read().decode('utf-8'))
+                json_data = json.loads(json_file.read().decode('utf-8'))
                 
-                title = json_content['videoInfo']['snippet']['title']
-                video_id = json_content['videoInfo']['id']
-                likes = int(json_content['videoInfo']['statistics']['likeCount'])
-                dislikes = json_content['videoInfo']['statistics']['dislikeCount']
-                views = json_content['videoInfo']['statistics']['viewCount']
+                title = json_data['videoInfo']['snippet']['title']
+                video_id = json_data['videoInfo']['id']
+                likes = int(json_data['videoInfo']['statistics']['likeCount'])
+                dislikes = json_data['videoInfo']['statistics']['dislikeCount']
+                views = json_data['videoInfo']['statistics']['viewCount']
 
                 video = Video(title=title, video_id=video_id, likes=likes, dislikes=dislikes, views=views)
                 video.save()
 
                 # Insert the parsed JSON content into the collection
-                collection_name.insert_one(json_content)
+                collection_name.insert_one(json_data)
 
                 return HttpResponse('JSON file uploaded successfully!', status=200)
             except json.JSONDecodeError as e:
@@ -135,25 +137,25 @@ def search_video(request):
 
     return render(request, 'youtube.html')
 
-# @require_GET
-# def get_video_data(request, video_id):
-#     collection_name = connect()
+@require_GET
+def get_video_data(request, video_id):
+    collection_name = connect()
 
-#     result = collection_name.find_one({'videoInfo.id': video_id})
-#     print(result)
-#     if result:
-#         # return JsonResponse(result, encoder=MongoEncoder, safe=False)
-#         video_data = {
-#             'videoInfo': {
-#                 'id': result['videoInfo']['id'],
-#                 'snippet': result['videoInfo']['snippet'],
-#                 'statistics': result['videoInfo']['statistics'],
-#             }
-#             # Add more fields as needed
-#         }
-#         return JsonResponse({'success': True, 'videoData': video_data})
-#     else:
-#         return JsonResponse({'error': 'Video not found'}, status=404)
+    result = collection_name.find_one({'videoInfo.id': video_id})
+    print(result)
+    if result:
+        # return JsonResponse(result, encoder=MongoEncoder, safe=False)
+        video_data = {
+            'videoInfo': {
+                'id': result['videoInfo']['id'],
+                'snippet': result['videoInfo']['snippet'],
+                'statistics': result['videoInfo']['statistics'],
+            }
+            # Add more fields as needed
+        }
+        return JsonResponse({'success': True, 'videoData': video_data})
+    else:
+        return JsonResponse({'error': 'Video not found'}, status=404)
 
 @csrf_exempt
 def upload_video_details(request):
@@ -200,3 +202,43 @@ def upload_video_details(request):
 
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@require_GET
+def home(request):
+
+    # Connect to MongoDB
+    # client = MongoClient('mongodb://localhost:27017/')
+    # db = client['your_database_name']  # Replace 'your_database_name' with your actual database name
+    # collection = db['your_collection_name']  # Replace 'your_collection_name' with your actual collection name
+    directory = "api/test"
+    # def insert_json_files(directory):
+    print(directory)
+    for root, dirs, files in os.walk(directory):
+        print(216)
+        for file in files:
+            print(218)
+            if file.endswith(".json"):
+                file_path = os.path.join(root, file)
+                with open(file_path, 'r') as json_file:
+                    try:
+                        json_data = json.load(json_file)
+
+                        title = json_data['videoInfo']['snippet']['title']
+                        video_id = json_data['videoInfo']['id']
+                        likes = int(json_data['videoInfo']['statistics']['likeCount'])
+                        dislikes = json_data['videoInfo']['statistics']['dislikeCount']
+                        views = json_data['videoInfo']['statistics']['viewCount']
+                        video = Video(title=title, video_id=video_id, likes=likes, dislikes=dislikes, views=views)
+                        video.save()
+                        print(video.views)
+                        # Insert the JSON data into MongoDB
+                        # collection.insert_one(json_data)
+                        # print(f"Inserted data from {file_path} into MongoDB")
+                    except Exception as e:
+                        print(f"Error inserting data from {file_path} into MongoDB: {e}")
+    return HttpResponse("Data inserted successfully")
+    # Specify the directory containing your JSON files
+     # Replace with the actual path
+
+    # Call the function to insert JSON files into MongoDB
+    # insert_json_files(directory_path)
