@@ -59,7 +59,13 @@
                     <button id="dislikeButton" onclick="dislikeVideo(currentVideoId, dislike)">
                         <span id="dislikeIcon">👎</span> <span id="dislikeCount">0</span>
                     </button>
-                    <span id="viewsCount">Views: 0</span>
+
+                    <button id="favoriteButton" onclick="favoriteVideo(currentVideoId)">
+                        <span id="favoriteIcon" style="color: black;">&#10084;</span>
+                    </button>                    
+
+                    <span id="viewsCount"  style="margin-left: 10px;">Views: 0</span>
+                    
                 </div>
             
             <div id="videoDetails">
@@ -104,13 +110,21 @@
 
                 data.results.forEach(video => {
                     const li = document.createElement('li');
-                    li.textContent = video.videoInfo.snippet.title;
+                    // li.textContent = `${video.videoInfo.snippet.title} - Views: ${video.videoInfo.statistics.viewCount}`;
+                    const titleDiv = document.createElement('div');
+                    const viewsDiv = document.createElement('div');
+
+                    titleDiv.textContent = video.videoInfo.snippet.title;
+                    viewsDiv.textContent = `Views: ${video.videoInfo.statistics.viewCount}`;
                     li.addEventListener('click', () => {
                         playVideo(video.videoInfo.id, video.videoInfo.statistics.viewCount, video.videoInfo.statistics.likeCount, video.videoInfo.statistics.dislikeCount, video.videoInfo.snippet.title, video.videoInfo.snippet.description, video.videoInfo.snippet.channelTitle);
                         document.getElementById('videoInfo').style.display = 'block';
                         document.getElementById('videoDetails').style.display = 'block';
                         // document.getElementById('channelBox').style.display = 'block';
                     });
+                    
+                    li.appendChild(titleDiv);
+                    li.appendChild(viewsDiv);
                     searchResults.appendChild(li);
                 });
             })
@@ -118,27 +132,30 @@
         }
 
         function playVideo(videoId, viewsCount, likeCount, dislikeCount, title, description, channelName) {
+            console.log(videoId);
             const videoPlayer = document.getElementById('videoPlayer');
             videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
-            currentVideoId = videoId; 
-            // updateVideoDataFromServer(videoId);
-            views = viewsCount;
-            like = likeCount;
-            dislike = dislikeCount;
-            document.getElementById("likeCount").innerText = like;
-            document.getElementById("dislikeCount").innerText = dislike;
-            document.getElementById('videoTitle').textContent = title;
-            document.getElementById('videoDescription').textContent = description;
-            document.getElementById('channelName').textContent = channelName;
+            currentVideoId = videoId;
+            suggestions(videoId);
+            updateVideoDataFromServer(videoId); 
+            // suggestions(videoID);
+            // views = viewsCount;
+            // like = likeCount;
+            // dislike = dislikeCount;
+            // document.getElementById("likeCount").innerText = like;
+            // document.getElementById("dislikeCount").innerText = dislike;
+            // document.getElementById('videoTitle').textContent = title;
+            // document.getElementById('videoDescription').textContent = description;
+            // document.getElementById('channelName').textContent = channelName;
          
-            // document.getElementById("viewsCount").innerText = `Views: ${views}`;
-            console.log(videoId);
-            console.log(viewsCount);
-            console.log(likeCount);
-            console.log(dislikeCount);
-            likeButton.disabled=false;
-            dislikeButton.disabled=false;
-            updateViewsCount(views);
+            // // document.getElementById("viewsCount").innerText = `Views: ${views}`;
+            // console.log(videoId);
+            // console.log(viewsCount);
+            // console.log(likeCount);
+            // console.log(dislikeCount);
+            // likeButton.disabled=false;
+            // dislikeButton.disabled=false;
+            // updateViewsCount(views);
             // resetLikeDislike();
         }
 
@@ -147,6 +164,7 @@
             document.getElementById("viewsCount").innerText = `Views: ${view+1}`;
             // const viewsCountSpan = document.getElementById('viewsCount');
             // viewsCountSpan.textContent = `Views: ${viewsCount}`;
+            updateVideoData(videoId, '1');
         }
 
         function likeVideo(videoId, like) {
@@ -216,61 +234,156 @@
             .catch(error => console.error('Error:', error));
         }
 
-    // function updateVideoDataFromServer(videoId) {
-    //     console.log(videoId);
-    //     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    function updateVideoDataFromServer(videoId) {
+        console.log(videoId);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    //     fetch(`/get_video_data/${encodeURIComponent(videoId)}/`, {
-    //     method: 'GET',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'X-CSRFToken': csrfToken,
-    //     },
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //     if (data.success) {
-    //         // Update your JSON with the new data
-    //         const videoData = data.videoData; // Modify this based on your actual response structure
-    //         console.log('Video data fetched successfully:', videoData);
-    //         // Update your JSON here using the fetched data
-    //         const statistics = videoData.videoInfo.statistics;
-    //         const snippet = videoData.videoInfo.snippet;
+        fetch(`/get_video_data/${encodeURIComponent(videoId)}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+            // Update your JSON with the new data
+            const videoData = data.videoData; // Modify this based on your actual response structure
+            console.log('Video data fetched successfully:', videoData);
+            // Update your JSON here using the fetched data
+            const statistics = videoData.videoInfo.statistics;
+            const snippet = videoData.videoInfo.snippet;
 
-    //         views = statistics.viewCount;
-    //         like = statistics.likeCount;
-    //         dislike = statistics.dislikeCount;
-    //         title = snippet.title;
-    //         description = snippet.description;
-    //         channelName = snippet.channelTitle;
+            views = statistics.viewCount;
+            like = statistics.likeCount;
+            dislike = statistics.dislikeCount;
+            title = snippet.title;
+            description = snippet.description;
+            channelName = snippet.channelTitle;
 
-    //         console.log(views);
-    //         console.log(like);
-    //         console.log(dislike);
-    //         console.log(title);
-    //         console.log(description);
-    //         console.log(channelName);
+            console.log(views);
+            console.log(like);
+            console.log(dislike);
+            console.log(title);
+            console.log(description);
+            console.log(channelName);
 
-    //         document.getElementById("likeCount").innerText = like;
-    //         document.getElementById("dislikeCount").innerText = dislike;
-    //         document.getElementById('videoTitle').textContent = title;
-    //         document.getElementById('videoDescription').textContent = description;
-    //         document.getElementById('channelName').textContent = channelName;
+            document.getElementById("likeCount").innerText = like;
+            document.getElementById("dislikeCount").innerText = dislike;
+            document.getElementById('videoTitle').textContent = title;
+            document.getElementById('videoDescription').textContent = description;
+            document.getElementById('channelName').textContent = channelName;
 
-    //         console.log(videoId);
-    //         console.log(viewsCount);
-    //         console.log(likeCount);
-    //         console.log(dislikeCount);
-    //         likeButton.disabled = false;
-    //         dislikeButton.disabled = false;
-    //         updateViewsCount(views);
-    //     } else {
-    //         console.error(`Error fetching video data: ${data.error}`);
-    //     }
-    //     })
-    //     .catch(error => console.error('Error:', error));
-    //     }
+            console.log(videoId);
+            console.log(viewsCount);
+            console.log(likeCount);
+            console.log(dislikeCount);
+            likeButton.disabled = false;
+            dislikeButton.disabled = false;
+            updateViewsCount(views);
+        } else {
+            console.error(`Error fetching video data: ${data.error}`);
+        }
+        })
+        .catch(error => console.error('Error:', error));
+        }
 
+    function suggestions(videoID) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/suggestions/${encodeURIComponent(videoID)}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const searchResultsDiv = document.getElementById('searchResults');
+            searchResultsDiv.innerHTML = ''; // Clear existing search results
+
+            if (data.suggestions.length === 0) {
+                const noSuggestions = document.createElement('div');
+                noSuggestions.textContent = 'No suggestions available';
+                searchResultsDiv.appendChild(noSuggestions);
+            } else {
+        
+                data.suggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    // suggestionItem.textContent = suggestion.videoInfo.snippet.title; // Adjust based on your data structure
+                    const suggestDiv = document.createElement('div');
+                    const titleDiv = document.createElement('div');
+                    const viewsDiv = document.createElement('div');
+
+                    suggestDiv.textContent = "Suggestions"
+                    titleDiv.textContent = suggestion.videoInfo.snippet.title;
+                    viewsDiv.textContent = `Views: ${suggestion.videoInfo.statistics.viewCount}`;
+
+                    suggestionItem.classList.add('suggestion-box'); 
+                    suggestionItem.addEventListener('click', () => {
+
+                        playVideo(suggestion.videoInfo.id, suggestion.videoInfo.statistics.viewCount, suggestion.videoInfo.statistics.likeCount, 
+                        suggestion.videoInfo.statistics.dislikeCount, suggestion.videoInfo.snippet.title, 
+                        suggestion.videoInfo.snippet.description, suggestion.videoInfo.snippet.channelTitle);
+
+                        document.getElementById('videoInfo').style.display = 'block';
+                        document.getElementById('videoDetails').style.display = 'block';
+                        // document.getElementById('channelBox').style.display = 'block';
+                    });
+                    suggestionItem.appendChild(suggestDiv);
+                    suggestionItem.appendChild(titleDiv);
+                    suggestionItem.appendChild(viewsDiv);
+                    searchResultsDiv.appendChild(suggestionItem);
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    let favorited = false;
+
+    function favoriteVideo(videoId) {
+        const favoriteButton = document.getElementById('favoriteButton');
+        const favoriteIcon = document.getElementById('favoriteIcon');
+
+        if (!favorited) {
+            favorited = true;
+            favoriteIcon.style.color = 'red'; // Change heart color to red
+            // favoriteIcon.style.border = '1px solid red'; // Change border color to red
+            // Perform actions when favoriting a video (e.g., save to favorites list, update server, etc.)
+            updateFavoriteStatus(videoId, true);
+        } else {
+            favorited = false;
+            favoriteIcon.style.color = 'black'; // Change heart color to black
+            // favoriteIcon.style.border = '1px solid black'; // Change border color to black
+            // Perform actions when unfavoriting a video (e.g., remove from favorites list, update server, etc.)
+            updateFavoriteStatus(videoId, false);
+        }
+    }
+
+    function updateFavoriteStatus(videoId, isFavorite) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const action = isFavorite ? 'add' : 'remove';
+
+        fetch(`/favorite_video/${encodeURIComponent(videoId)}/${action}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log(`Video ${action}ed successfully.`);
+            } else {
+                console.error(`Error ${action}ing video: ${data.error}`);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
     </script>
 </body>
 </html>

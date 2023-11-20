@@ -114,6 +114,15 @@ body {
     margin: 10px 0;
 }
 
+/* youtube.css */
+.suggestion-box {
+    border: 1px solid #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
 #videoDetails {
     /* display: none; */
     background-color: #000000; /* Greyish color */
@@ -190,3 +199,8 @@ margin-top: 0px;
 float: right; 
 width: 33%; 
 } */
+
+/* In your CSS file */
+.favorited {
+    color: red; /* Change the color to red */
+}

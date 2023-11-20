@@ -318,19 +318,21 @@ class Neo4j_Graph:
         return video_suggestions
 
 
-    def update_node( self , video_id , property_name):
+    def update_node(self, video_id, property_name):
         query = (
             "MATCH (n:video_node) WHERE n.id_ = $video_id "
-            "SET n.$property_name = n.$property_name + 1 "
+            f"SET n.{property_name} = n.{property_name} + 1 "
             "RETURN n"
         )
-        self.execute_query(query)
-        
-G = Neo4j_Graph(collection= collection) 
+        parameters = {"video_id": video_id}
+        self.execute_query(query, parameters)
+
+
+# G = Neo4j_Graph(collection= collection) 
 
 
 # G.create_node()
 
-G.make_connections()
+# G.make_connections()
 
 # print(G.suggest_video() )
