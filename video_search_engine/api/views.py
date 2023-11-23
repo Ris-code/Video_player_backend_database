@@ -1,11 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json  # Import the json module
 from django.http import HttpResponse
 from pymongo import MongoClient
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from .models import Video
+from .models import Video, MyUser
 from json import JSONEncoder
 from django.core.serializers.json import DjangoJSONEncoder
 from bson.objectid import ObjectId
@@ -15,7 +15,21 @@ import hashlib
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User, auth
+from django.contrib import messages
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
+from datetime import datetime
 
+def frontpage(request):
+    return render(request, 'home.html')
+
+def history_view(request):
+    return render(request, 'History.html')
 
 def generate_id(word):
     return hashlib.md5(word.encode()).hexdigest()
@@ -31,6 +45,18 @@ def connect():
     collection_name = dbname["Set_of_videos"]
 
     return collection_name
+
+def connect_user():
+    connect_string = settings.MONGO_CONNECTION_STRING
+    my_client = MongoClient(connect_string)
+    # my_client = MongoClient('mongodb://localhost:27017/')
+    # First define the database name
+    dbname = my_client['Video']
+
+    # Now get/create collection name
+    collection_name = dbname["User_History"]
+
+    return collection_name
 class MongoEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, ObjectId):
@@ -42,6 +68,9 @@ def serialize_mongo_document(document):
 
 def store_video(request):
     collection_name = connect()
+
+    user_profile = MyUser.objects.get(username=request.user)
+    print(user_profile.email)
 
     if request.method == 'POST':
         # Get the JSON file from the request.FILES dictionary
@@ -69,34 +98,60 @@ def store_video(request):
                 return HttpResponse(f'Error decoding JSON: {str(e)}', status=400)
         else:
             return HttpResponse('No JSON file provided!', status=400)
-    else:
-        return render(request, 'channel.html')
+    
+    return render(request, 'channel.html', {'user_profile': user_profile})
 
 @csrf_exempt  # Only for demonstration. Use proper CSRF handling in production.
 def update_video_data(request):
+    print(1)
     collection_name = connect()
+    collection_name_user = connect_user()
 
     if request.method == 'POST':
         video_id = request.POST.get('video_id', None)
         action = request.POST.get('action', None)
         query = {'videoInfo.id': video_id}
+        result = collection_name.find_one({'videoInfo.id': video_id})
         if video_id and action:
             try:
                 video = Video.objects.get(video_id=video_id)
                 if action == 'like':
                     video.likes += 1
-                    update = {'$set': {'videoInfo.statistics.likeCount': str(video.likes)}}
+                    like = int(result['videoInfo']['statistics']['likeCount'])
+                    update = {'$set': {'videoInfo.statistics.likeCount': str(like+1)}}
                     collection_name.update_one(query, update)
+
+                    query = {"user.Liked_Videos": {"$in": [video_id]}}
+
+# Execute the query
+                    result_check = collection_name_user.find_one(query)
+                    # user_history
+
+                    if result_check is None:
+                        user_profile = MyUser.objects.get(username=request.user)
+                        print(user_profile.email)
+
+                        user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+                        print(collection_name_user)
+
+                        like = user_doc['user']['Liked_Videos']
+                        like.append(video_id)
+
+                        update = {'$set': {'user.Liked_Videos': like}}
+                        collection_name_user.update_one({'user.username': user_profile.username}, update)
                     print(video.likes)
                     print(collection_name.videoInfo.statistics.likeCount)
+
                 elif action == 'dislike':
                     video.dislikes += 1
-                    update = {'$set': {'videoInfo.statistics.dislikeCount': video.dislikes}}
+                    dislike = int(result['videoInfo']['statistics']['dislikeCount'])
+                    update = {'$set': {'videoInfo.statistics.dislikeCount': dislike+1}}
                     collection_name.update_one(query, update)
                 video.views += 1  # Increment views for every interaction
                 video.save()
 
-                update={'$set': {'videoInfo.statistics.viewCount': video.views}}
+                view = int(result['videoInfo']['statistics']['viewCount'])
+                update={'$set': {'videoInfo.statistics.viewCount': view+1}}
                 collection_name.update_one(query, update)
 
                 return JsonResponse({'success': True})
@@ -108,7 +163,14 @@ def update_video_data(request):
 def search_video(request):
     collection_name = connect()
 
+    # if request.user.is_authenticated:
+    user_profile = MyUser.objects.get(username=request.user)
+    print(user_profile.email)
     if request.method == 'POST':
+
+        # user_profile = MyUser.objects.get(username=request.user)
+        # print(user_profile)
+
         query = request.POST.get('query', '')
         result = collection_name.find({
             "$or": [
@@ -123,6 +185,7 @@ def search_video(request):
             {**doc, 'videoInfo': {**doc['videoInfo'], '_id': str(doc['_id'])}} for doc in result
         ]
 
+        # print(user_profile.name)
         response_data = {
             'query': query,
             'results': search_results,
@@ -135,14 +198,34 @@ def search_video(request):
 
         return JsonResponse(response_data, encoder=MongoEncoder, safe=False)
 
-    return render(request, 'youtube.html')
+    return render(request, 'youtube.html', {'user_profile': user_profile})
 
 @require_GET
 def get_video_data(request, video_id):
     collection_name = connect()
+    collection_name_user = connect_user()
 
     result = collection_name.find_one({'videoInfo.id': video_id})
     print(result)
+
+    user_profile = MyUser.objects.get(username=request.user)
+    print(user_profile.email)
+
+    user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+    print(collection_name_user)
+
+    history = user_doc['user']['History']
+    json_entry = {
+        video_id : {
+            "date_time": str(datetime.now()),
+            "weekday": str(datetime.now().strftime("%A")),
+        }
+    }
+    history.append(json_entry)
+
+    update = {'$set': {'user.History': history}}
+    collection_name_user.update_one({'user.username': user_profile.username}, update)
+
     if result:
         # return JsonResponse(result, encoder=MongoEncoder, safe=False)
         video_data = {
@@ -153,6 +236,8 @@ def get_video_data(request, video_id):
             }
             # Add more fields as needed
         }
+
+
         return JsonResponse({'success': True, 'videoData': video_data})
     else:
         return JsonResponse({'error': 'Video not found'}, status=404)
@@ -187,7 +272,7 @@ def upload_video_details(request):
                 "statistics": {
                 "commentCount": 0,
                 "viewCount": 0,
-                "favoriteCount": 0,
+                "playlistCount": 0,
                 "dislikeCount": 0,
                 "likeCount": "0"
                 },
@@ -202,6 +287,188 @@ def upload_video_details(request):
 
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@require_GET
+def playlist(request, video_id, action):
+    print(1)
+    collection_name = connect()
+    collection_name_user = connect_user()
+    # Your logic to add/remove the video from playlists based on the action
+    # This function should handle adding/removing a video from playlists based on the video_id and action parameters
+    result = collection_name.find_one({'videoInfo.id': video_id})
+    query = {"user.playlist": {"$in": [video_id]}}
+
+# Execute the query
+    result_check = collection_name_user.find_one(query)
+
+    if action == 'add' and result_check is None:
+        user_profile = MyUser.objects.get(username=request.user)
+        print(user_profile.email)
+
+        user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+        print(collection_name_user)
+
+        playlist = user_doc['user']['playlist']
+        playlist.append(video_id)
+
+        update = {'$set': {'user.playlist': playlist}}
+        collection_name_user.update_one({'user.username': user_profile.username}, update)
+
+    # if result:
+    #     statistics = result.get('videoInfo', {}).get('statistics', {})
+    #     playlist = statistics.get('playlistCount', 0)  # Default value is 0 if not found
+
+    #     if action == 'add':
+    #         new_playlist_count = playlist + 1
+    #         collection_name.update_one(
+    #             {'videoInfo.id': video_id},
+    #             {'$set': {'videoInfo.statistics.playlistCount': new_playlist_count}}
+    #         )
+            # Perform other operations if needed
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': True, 'suggest': 'Video already in playlist'})
+
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('login-username')
+        password = request.POST.get('login-password')
+
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            return redirect(search_video)
+        else:
+            messages.info(request, 'Invalid Username or Password')
+            return redirect(login_user)
+
+    return render(request, 'login.html')
+
+def createpost(request):
+    collection_name = connect_user()
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email_id = request.POST.get('email')
+        user_name = request.POST.get('username')
+        password1 = request.POST.get('password')
+        password2 = request.POST.get('confirm-password')
+        channel_name = request.POST.get('channel_name')
+        channel_id = generate_id(channel_name)
+        # income = 0
+        # deduction = 0
+
+        if password1 != password2:
+            messages.info(request, 'Both passwords are not matching')
+            return redirect(createpost)
+        # Create a new user
+        # if password1==password2:
+        if MyUser.objects.filter(username=user_name).exists():
+            messages.info(request, 'Username is already taken')
+            return redirect(createpost)
+        elif MyUser.objects.filter(email=email_id).exists():
+            messages.info(request, 'Email is already taken')
+            return redirect(createpost)
+        else:
+            new_user = MyUser.objects.create(
+                username=user_name,
+                email=email_id,
+                password=password1,
+                name=name,
+                channel_id=channel_id,
+                channel=channel_name,
+                # Total_Income=income,
+                # Total_Deduction=deduction
+            )
+            new_user.set_password(new_user.password)
+            new_user.save()
+
+            document = {
+                "user": {
+                    "username": user_name,
+                    "name": name,
+                    "channel_id": channel_id,
+                    "channel": channel_name,
+                    "channel": channel_name,
+                    "channel_id": channel_id,
+                    "History": [],
+                    "Liked_Videos": [],
+                    "playlist": [],
+                }
+            }
+
+            # Insert the document into the collection
+            collection_name.insert_one(document)
+            # return render(request, 'signup.html', {'message': 'User created successfully!'})
+            return redirect(login_user)
+        # else:
+    else:
+    # Handle GET request or any other HTTP method
+     return render(request, 'signup.html')
+
+@require_GET
+def check_like(request, video_id):
+    collection_name_user = connect_user()
+    user_profile = MyUser.objects.get(username=request.user)
+    print(user_profile.email)
+
+    user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+    print(collection_name_user)
+
+    like = user_doc['user']['Liked_Videos']
+
+    if video_id in like:
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+
+@require_GET
+def check_playlist(request, video_id):
+    collection_name_user = connect_user()
+    user_profile = MyUser.objects.get(username=request.user)
+    print(user_profile.email)
+
+    user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+    print(collection_name_user)
+
+    playlist = user_doc['user']['playlist']
+
+    if video_id in playlist:
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+
+
+@require_GET
+def get_history(request, username):
+    collection_name_user = connect_user()
+    collection_name = connect()
+    print(username)
+    user_doc = collection_name_user.find_one({'user.username': username})
+    if user_doc:
+        print(1)
+        history = user_doc['user']['History']
+        print(history)
+        videos = []
+
+        for key in history:
+            for k in key.keys():
+                print(k)
+                result = collection_name.find_one({'videoInfo.id': k})
+                if result:
+                    json_video = {
+                        "title": result['videoInfo']['snippet']['title'],
+                        "timing": key[k]['date_time'],
+                        "Day": key[k]['weekday']
+                    }
+                    videos.append(json_video)
+        print(videos)
+        return JsonResponse(videos, safe=False)
+
+    return JsonResponse({"error": "User not found"}, status=404)
 
 @require_GET
 def home(request):

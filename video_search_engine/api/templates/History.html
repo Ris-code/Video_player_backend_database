@@ -1,0 +1,68 @@
+<!-- history_page.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Page</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .video-box {
+            border: 2px solid white;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-details {
+            flex: 1;
+        }
+
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Video History</h2>
+
+    <div id="historyContainer"></div>
+
+    <script>
+        // Extract data from the query parameter
+        const queryParams = new URLSearchParams(window.location.search);
+        const historyData = JSON.parse(queryParams.get('data'));
+
+        // Display history data (you can use your existing displayHistory logic here)
+        const historyContainer = document.getElementById('historyContainer');
+        historyData.forEach(video => {
+            console.log(video)
+            const videoBox = document.createElement('div');
+            videoBox.className = 'video-box';
+
+            const videoDetails = document.createElement('div');
+            videoDetails.className = 'video-details';
+            videoDetails.innerHTML = `
+                <h3>${video.title}</h3>
+                <p>Time: ${video.timing}</p>
+                <p>Day: ${video.Day}</p>
+            `;
+
+            videoBox.appendChild(videoDetails);
+            historyContainer.appendChild(videoBox);
+        });
+    </script>
+</body>
+
+</html>

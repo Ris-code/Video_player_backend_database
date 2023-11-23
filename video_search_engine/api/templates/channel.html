@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 {% load static %}
 <html lang="en">
 
@@ -12,33 +12,37 @@
 
 <body>  
     <div class="container">
-        <!-- Personal Details -->
+  
         <div class="left-side">
         <div id="text">
             <h2>Profile Details</h2>
         </div>
         <div class="personal-details">
-            <!-- <div class="detail-box"> -->
+      
                 <img class="profile-photo" src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Photo">
-            <!-- </div> -->
+
             <div class="detail-box">
-                <p>Rishav Aich<p>
+                <p>{{ user_profile.name }}</p>
             </div>
             <div class="detail-box">
-                <p>aich@gmail.com</p>
+                <p>{{user_profile.email}}</p>
             </div>
             <div class="detail-box">
-                <p>Channel Name: CodeRev</p>
+                <p>{{user_profile.channel}}</p>
             </div>
            
         </div>
+
+            <div class="navigation-buttons">
+                <button onclick="showHistory('{{ user_profile.username }}')">History</button>
+                <button onclick="showLikes('{{ user_profile.username }}')">Likes</button>
+                <button onclick="showPlaylist('{{ user_profile.username }}')">Playlist</button>
+            </div>
+
         </div>
-
-        <!-- Forms Container -->
+   
         <div class="forms-container">
-            <!-- <h2>Upload JSON File or Enter YouTube Video Details</h2> -->
-
-            <!-- Upload JSON Form -->
+        
             <form id="jsonForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <label for="jsonFile">Upload a JSON file:</label>
@@ -47,7 +51,7 @@
                 <button type="button" onclick="uploadJSON()">Upload JSON File</button>
             </form>
 
-            <!-- Enter YouTube Video Details Form -->
+      
             <form id="youtubeForm">
                 <label for="videoId">YouTube Video ID:</label>
                 <input type="text" id="videoId" name="videoId" placeholder="Enter video ID" required>
@@ -68,7 +72,7 @@
 
     <script>
         function getCookie(name) {
-            // Function to get CSRF token from cookies
+      
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -84,7 +88,7 @@
         }
 
         function uploadJSON() {
-            // Function to upload JSON file
+    
             const fileInput = document.getElementById('jsonFile');
             const file = fileInput.files[0];
 
@@ -109,22 +113,21 @@
         }
 
         function uploadVideoDetails() {
-            // Function to upload YouTube video details
+    
             const videoId = document.getElementById('videoId').value;
             const tags = document.getElementById('tags').value;
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
 
-            // Add your logic to use the video details as needed (e.g., send to server)
             console.log('Video ID:', videoId);
             console.log('Tags:', tags);
             console.log('Title:', title);
             console.log('Description:', description);
 
-            const data = { videoId, tags, title, description }; // Add more data as needed
+            const data = { videoId, tags, title, description }; 
             const csrftoken = getCookie('csrftoken');
         
-            fetch('/channel/', { // Replace with your endpoint
+            fetch('/channel/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -136,7 +139,209 @@
             .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
         }
+
+        function showHistory(username) {
+            console.log(username);
+            function showHistory(username) {
+            console.log(username);
+            fetch(`/get_history/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Redirect to history.html with the data as a query parameter
+                    window.location.href = `/History.html?data=${JSON.stringify(data)}`;
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        }
+        }
+
+        // function displayHistory(historyData) {
+        //     console.log('History Data:', historyData);
+        //     const historyContainer = document.getElementById('historyContainer');
+        //     console.log('History Container:', historyContainer);
+        //     // historyContainer.innerHTML = ''; // Clear previous content
+
+        //     historyData.forEach(video => {
+        //         const videoBox = document.createElement('div');
+        //         videoBox.className = 'video-box';
+
+        //         const videoDetails = document.createElement('div');
+        //         videoDetails.className = 'video-details';
+        //         videoDetails.innerHTML = `
+        //             <h3>${video.title}</h3>
+        //             <p>Time: ${video.timing}</p>
+        //             <p>Day: ${video.Day}</p>
+        //         `;
+
+        //         videoBox.appendChild(videoDetails);
+        //         historyContainer.appendChild(videoBox);
+        //     });
+        // }
+    
+        function showLikes() {
+            
+            console.log('Likes clicked');
+        }
+
+
+        function showPlaylist() {
+            console.log('Playlist clicked');
+        }
     </script>
 </body>
 
-</html>
+</html> 
+
+<!-- <!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload JSON File and YouTube Video Details</title>
+    <link rel="stylesheet" href="{% static 'channel.css' %}" />
+</head>
+
+<body>
+    <div class="container">
+      
+        <div class="left-side">
+            <div id="text">
+                <h2>Profile Details</h2>
+            </div>
+            <div class="personal-details">
+            
+                <img class="profile-photo"
+                    src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg"
+                    alt="Profile Photo">
+              
+                <div class="detail-box">
+                
+                    <p>{{ user_profile.name }}</p>
+                </div>
+                <div class="detail-box">
+                    <p>{{user_profile.email}}</p>
+                </div>
+                <div class="detail-box">
+                    <p>{{user_profile.channel}}</p>
+                </div>
+
+                <div class="navigation-buttons" style="margin-top: 10px;">
+                    <button onclick="navigateTo('History')">History</button>
+                    <button onclick="navigateTo('Likes')">Likes</button>
+                    <button onclick="navigateTo('Playlist')">Playlist</button>
+                </div>
+
+            </div>
+           
+        </div>
+
+        <div class="forms-container">
+         
+            <form id="jsonForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="jsonFile">Upload a JSON file:</label>
+                <input type="file" id="jsonFile" name="jsonFile" accept=".json" required>
+                <br>
+                <button type="button" onclick="uploadJSON()">Upload JSON File</button>
+            </form>
+
+            <form id="youtubeForm">
+                <label for="videoId">YouTube Video ID:</label>
+                <input type="text" id="videoId" name="videoId" placeholder="Enter video ID" required>
+                <br>
+                <label for="tags">Video Tags:</label>
+                <input type="text" id="tags" name="tags" placeholder="Enter video tags" required>
+                <br>
+                <label for="title">Video Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter video title" required>
+                <br>
+                <label for="description">Video Description:</label>
+                <textarea id="description" name="description" rows="4"
+                    placeholder="Enter video description" required></textarea>
+                <br>
+                <button type="button" onclick="uploadVideoDetails()">Upload Video Details</button>
+            </form>
+
+          
+        </div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+  
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function uploadJSON() {
+    
+            const fileInput = document.getElementById('jsonFile');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('jsonFile', file);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload/', true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        alert('JSON file uploaded successfully!');
+                    } else {
+                        alert('Error uploading JSON file!');
+                    }
+                };
+                xhr.send(formData);
+            } else {
+                alert('Please select a JSON file!');
+            }
+        }
+
+        function uploadVideoDetails() {
+       
+            const videoId = document.getElementById('videoId').value;
+            const tags = document.getElementById('tags').value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+
+            console.log('Video ID:', videoId);
+            console.log('Tags:', tags);
+            console.log('Title:', title);
+            console.log('Description:', description);
+
+            const data = { videoId, tags, title, description }; 
+            const csrftoken = getCookie('csrftoken');
+
+            fetch('/channel/', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function navigateTo(page) {
+            console.log(`Navigating to ${page}`);
+        }
+    </script>
+</body>
+
+</html> -->

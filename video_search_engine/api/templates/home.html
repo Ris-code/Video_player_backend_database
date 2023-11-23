@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Netflix</title>
+
+    <link rel="stylesheet" href="{%static 'style.css'%}">
+    <link rel="stylesheet" href="mediaquery.css">
+    <link rel="stylesheet"
+        href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <script src="https://kit.fontawesome.com/bc3a1796c2.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="https://image.flaticon.com/icons/png/512/870/870910.ico'/> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+</head>
+
+<body>
+
+    <div class="navbar">
+        
+        <a href="{% url 'login' %}" id="signup-link" class="buttons">Sign In</a>
+
+    </div>
+    <div class="main">
+        <div class="area">
+            <h1>Unleash boundless content variety <br> your video journey, your stories, everywhere.</h1>
+            <h3>Watch anywhere
+            </h3>
+
+            
+            <h4>Ready to watch? Just click on <a href="{% url 'login' %}" id="signup-link" style="color:  #e50914;">Sign In</a>
+            </h4>
+        </div>
+
+    </div>
+    
+    
+</body>
+
+</html>
