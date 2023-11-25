@@ -29,7 +29,16 @@ def frontpage(request):
     return render(request, 'home.html')
 
 def history_view(request):
-    return render(request, 'History.html')
+    return render(request, 'video_info.html')
+
+def like_view(request):
+    return render(request, 'like.html')
+
+def playlist_view(request):
+    return render(request, 'playlist.html')
+
+def uploaded_video_details(request):
+    return render(request, 'upload_video.html')
 
 def generate_id(word):
     return hashlib.md5(word.encode()).hexdigest()
@@ -68,6 +77,7 @@ def serialize_mongo_document(document):
 
 def store_video(request):
     collection_name = connect()
+    collection_name_user = connect_user()
 
     user_profile = MyUser.objects.get(username=request.user)
     print(user_profile.email)
@@ -86,6 +96,15 @@ def store_video(request):
                 likes = int(json_data['videoInfo']['statistics']['likeCount'])
                 dislikes = json_data['videoInfo']['statistics']['dislikeCount']
                 views = json_data['videoInfo']['statistics']['viewCount']
+
+                user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+                # print(collection_name_user)
+
+                upload_video = user_doc['user']['uploaded_videos']
+                upload_video.append(video_id)
+
+                update = {'$set': {'user.uploaded_videos': upload_video}}
+                collection_name_user.update_one({'user.username': user_profile.username}, update)
 
                 video = Video(title=title, video_id=video_id, likes=likes, dislikes=dislikes, views=views)
                 video.save()
@@ -172,31 +191,32 @@ def search_video(request):
         # print(user_profile)
 
         query = request.POST.get('query', '')
-        result = collection_name.find({
-            "$or": [
-                {"videoInfo.snippet.title": {"$regex": f".*{query}.*", "$options": "i"}},
-                {"videoInfo.snippet.description": {"$regex": f".*{query}.*", "$options": "i"}},
-                {"videoInfo.snippet.tags": {"$regex": f".*{query}.*", "$options": "i"}}
+        if query != '':
+            result = collection_name.find({
+                "$or": [
+                    {"videoInfo.snippet.title": {"$regex": f".*{query}.*", "$options": "i"}},
+                    {"videoInfo.snippet.description": {"$regex": f".*{query}.*", "$options": "i"}},
+                    {"videoInfo.snippet.tags": {"$regex": f".*{query}.*", "$options": "i"}}
+                ]
+            })
+            
+            # video_ids = [doc['videoInfo']['id'] for doc in result]
+            search_results = [
+                {**doc, 'videoInfo': {**doc['videoInfo'], '_id': str(doc['_id'])}} for doc in result
             ]
-        })
-        
-        # video_ids = [doc['videoInfo']['id'] for doc in result]
-        search_results = [
-            {**doc, 'videoInfo': {**doc['videoInfo'], '_id': str(doc['_id'])}} for doc in result
-        ]
 
-        # print(user_profile.name)
-        response_data = {
-            'query': query,
-            'results': search_results,
-        }
+            # print(user_profile.name)
+            response_data = {
+                'query': query,
+                'results': search_results,
+            }
 
-        # video_information_dict = {}
-        # for video in video_ids:
-        #     information=Video.objects.get(video_id=video)
-        #     video_information_dict[video] = [information.likes, information.dislikes, information.views]
+            # video_information_dict = {}
+            # for video in video_ids:
+            #     information=Video.objects.get(video_id=video)
+            #     video_information_dict[video] = [information.likes, information.dislikes, information.views]
 
-        return JsonResponse(response_data, encoder=MongoEncoder, safe=False)
+            return JsonResponse(response_data, encoder=MongoEncoder, safe=False)
 
     return render(request, 'youtube.html', {'user_profile': user_profile})
 
@@ -236,7 +256,7 @@ def get_video_data(request, video_id):
             }
             # Add more fields as needed
         }
-
+        print(video_data)
 
         return JsonResponse({'success': True, 'videoData': video_data})
     else:
@@ -245,6 +265,7 @@ def get_video_data(request, video_id):
 @csrf_exempt
 def upload_video_details(request):
     collection_name = connect()
+    collection_name_user = connect_user()
 
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -280,6 +301,17 @@ def upload_video_details(request):
             }
         }
 
+        user_profile = MyUser.objects.get(username=request.user)
+        print(user_profile.email)
+
+        user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+        print(collection_name_user)
+
+        upload_video = user_doc['user']['uploaded_videos']
+        upload_video.append(video_id)
+
+        update = {'$set': {'user.uploaded_videos': upload_video}}
+        collection_name_user.update_one({'user.username': user_profile.username}, update)
         # Insert the document into the collection
         collection_name.insert_one(document)
 
@@ -397,6 +429,7 @@ def createpost(request):
                     "History": [],
                     "Liked_Videos": [],
                     "playlist": [],
+                    "uploaded_videos": [],
                 }
             }
 
@@ -451,7 +484,7 @@ def get_history(request, username):
     if user_doc:
         print(1)
         history = user_doc['user']['History']
-        print(history)
+        # print(history)
         videos = []
 
         for key in history:
@@ -460,11 +493,87 @@ def get_history(request, username):
                 result = collection_name.find_one({'videoInfo.id': k})
                 if result:
                     json_video = {
+                        "id": k,
                         "title": result['videoInfo']['snippet']['title'],
                         "timing": key[k]['date_time'],
                         "Day": key[k]['weekday']
                     }
                     videos.append(json_video)
+        # print(videos)
+        return JsonResponse(videos, safe=False)
+
+    return JsonResponse({"error": "User not found"}, status=404)
+
+@require_GET
+def get_likes(request, username):
+    collection_name_user = connect_user()
+    collection_name = connect()
+    print(username)
+    user_doc = collection_name_user.find_one({'user.username': username})
+    if user_doc:
+        print(1)
+        liked = user_doc['user']['Liked_Videos']
+        print(liked)
+        videos = []
+
+        for key in liked:
+            result = collection_name.find_one({'videoInfo.id': key})
+            if result:
+                json_video = {
+                    "id": key,
+                    "title": result['videoInfo']['snippet']['title'],
+                }
+                videos.append(json_video)
+        print(videos)
+        return JsonResponse(videos, safe=False)
+
+    return JsonResponse({"error": "User not found"}, status=404)
+
+@require_GET
+def get_playlist(request, username):
+    collection_name_user = connect_user()
+    collection_name = connect()
+    print(username)
+    user_doc = collection_name_user.find_one({'user.username': username})
+    if user_doc:
+        print(1)
+        playlist = user_doc['user']['playlist']
+        print(playlist)
+        videos = []
+
+        for key in playlist:
+            result = collection_name.find_one({'videoInfo.id': key})
+            if result:
+                json_video = {
+                    "id": key,
+                    "title": result['videoInfo']['snippet']['title'],
+                }
+                videos.append(json_video)
+        print(videos)
+        return JsonResponse(videos, safe=False)
+
+    return JsonResponse({"error": "User not found"}, status=404)
+
+@require_GET
+def get_uploaded_videos(request, username):
+    collection_name_user = connect_user()
+    collection_name = connect()
+    print(username)
+    user_doc = collection_name_user.find_one({'user.username': username})
+    if user_doc:
+        print(1)
+        upload_video = user_doc['user']['uploaded_videos']
+        print(upload_video)
+        videos = []
+
+        for key in upload_video:
+            result = collection_name.find_one({'videoInfo.id': key})
+            if result:
+                json_video = {
+                    "id": key,
+                    "title": result['videoInfo']['snippet']['title'],
+                }
+                videos.append(json_video)
         print(videos)
         return JsonResponse(videos, safe=False)
 

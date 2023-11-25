@@ -6,11 +6,395 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Template</title>
-    <link rel="stylesheet" href="{% static 'youtube.css' %}" />
+    <!-- <link rel="stylesheet" href="{% static 'youtube.css' %}" /> -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            /* background-image: url('https://r4.wallpaperflare.com/wallpaper/161/571/676/hexagon-dark-depth-of-field-digital-art-wallpaper-48e6eda8e0d0ac48d05c716e8872b44a.jpg');  */
+            /* background-image: url('https://r4.wallpaperflare.com/wallpaper/681/554/339/abstract-planet-space-purple-wallpaper-6970a84df14a9dbb16f7683f30a186ad.jpg');  */
+            /* background-image: url('https://r4.wallpaperflare.com/wallpaper/652/440/850/digital-art-3d-yellow-abstract-wallpaper-727182206d962eab4a38e225d0c8e9d2.jpg');  */
+            /* background-image: url('https://r4.wallpaperflare.com/wallpaper/404/279/825/jellyfish-light-fractal-digital-wallpaper-19b0788db1eaddeb7677386f20e1c6ad.jpg');  */
+            background-image: url('https://r4.wallpaperflare.com/wallpaper/41/974/369/star-celestial-body-space-light-wallpaper-1910883d61facdab3647183f307116bd.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            margin-left: 5px;
+            /* background-image: url('https://r4.wallpaperflare.com/wallpaper/161/571/676/hexagon-dark-depth-of-field-digital-art-wallpaper-48e6eda8e0d0ac48d05c716e8872b44a.jpg');  */
+            /* background-size: cover;  */
+            /* background-position: center;  */
+        }
+
+        /* body {
+    font-family: Arial, sans-serif;
+    background-image: url('https://r4.wallpaperflare.com/wallpaper/161/571/676/hexagon-dark-depth-of-field-digital-art-wallpaper-48e6eda8e0d0ac48d05c716e8872b44a.jpg'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+} */
+
+#container {
+    display: flex;
+    height: 100vh;
+    /* background-color: #071941; */
+   
+}
+
+#sidePanel {
+    flex: 1;
+    /* background-color: #000000; */
+    overflow-y: auto;
+    padding: 20px;
+    color: #ffffff;
+    /* opacity: 0.6; */
+}
+
+/* #main-content-side { */
+    /* flex: 1;
+    background-color: #000000;
+    opacity: 0.6;
+    overflow-y: auto;
+} */
+
+/* #searchBar {
+    margin-bottom: 20px;
+} */
+
+#searchBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1.5px transparent;
+    border-radius: 100px;
+    padding: 5px;
+    margin-bottom: 20px;
+    color: #ffffff;
+    margin-top: 15px;
+}
+
+#searchBar input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    /* background-color: black; */
+} 
+
+#searchBar button {
+    background-color: #f8f8f8;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#searchBar button:hover {
+    background-color: #d3d3d3;
+}
+
+#searchResults {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    color: #0540e2; /* Light text color for search results */
+}
+/* 
+#searchResults li {
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: rgb(170, 255, 0);
+} */
+
+#mainPanel {
+    flex: 3;
+    background-color: transparent;
+    overflow: hidden;
+    padding: 20px;
+    overflow-y: auto;
+    margin-top: 0px;
+}
+
+#videoPlayer {
+    /* display: none; */
+    width: 100%;
+    height: 60vh;
+    /* background-color: #000000; */
+    /* opacity: 0.5; */
+}
+
+#videoInfo {
+    display: none;
+    margin-top: 0px;
+    /* background-color: black; */
+    color: #ffffff;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    flex:1;
+    /* opacity: 0.5; */
+    box-shadow: #000000;
+}
+
+#likeButton,
+#dislikeButton {
+    cursor: pointer;
+    margin-right: 20px;
+    /* background-color: transparent; */
+    font-size: 15px;
+
+}
+
+#searchResults li {
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 1px solid #ffffff; /* Border color */
+    padding: 10px; /* Padding inside the box */
+    border-radius: 5px; /* Rounded corners */
+    margin: 10px 0;
+    color: #ffffff;
+}
+
+#videoDetails {
+    /* display: none; */
+    background-color: black; /* Greyish color */
+    color: #ffffff !important; /* White text color */
+    padding: 10px; /* Padding inside the box */
+    margin-top: 0px; /* Space above the box */
+    /* width: 60%; */
+    overflow: auto;
+    text-overflow: ellipsis;
+    opacity: 0.8;
+    /* white-space: nowrap; */
+}
+
+#channelBox {
+    display: flex;
+    margin-top: 0px;
+    background-color: #000000;
+    color: #ffffff;
+    justify-content: center;
+    /* align-items: center; */
+    padding: 10px;
+    border: 1px solid #ffffff; /* Border color */
+    border-radius: 100px; /* Rounded corners */
+    margin: 0 auto;
+    margin-bottom: 20px;
+    width: 39%;
+    background-color: #000000;
+    opacity: 0.8;
+    /* flex-grow: 1; text-align: right; */
+    /* justify-content: center;
+    align-items: center; */
+}
+
+#videoStats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000;
+    opacity: 0.8;
+    /* margin-top: 10px; */
+    padding: 10px;
+    /* width: 50%; */
+}
+
+#logoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 2px #ffffff;
+}
+
+#logoText {
+    font-size: 20px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+#profileDiv {
+    color: #ffffff; 
+    display: flex; 
+    align-items: center;
+    justify-content: right;
+    background-color: transparent;
+    /* border: 1px solid #ffffff; */
+    /* border-radius: 100px; */
+    width: 100px;
+    margin-bottom: 0px;
+    padding: 2px;
+    margin-top: 0px;
+    position: relative; /* Added to position the name */
+    margin-left: auto; 
+    font-size: large;
+}
+
+/* #profileDiv:hover {
+    background-color: #692757;
+    color: #ffffff;
+} */
+
+#profileDiv img {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    justify-content: right;
+
+    
+}
+
+#profileDiv .profile_name {
+    margin-right: 10px;
+    border: 1px #ffffff;
+    color: #ffffff;
+}
+
+
+
+/* #profileDiv {
+    color: #ffffff; 
+    display: flex; 
+    align-items: center;
+    justify-content: flex-end; 
+    background-color: #000000;
+    border: 1px solid #ffffff;
+    border-radius: 100px;
+    width: 100px;
+    margin-bottom: 0px;
+    padding: 2px;
+    margin-top: 0px;
+    position: relative; 
+    margin-left: auto; 
+}
+
+#profileDiv span {
+
+    position: absolute;
+    top: 50%;
+    left: 100%; 
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+
+
+#profileDiv img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    align-items: left;
+} */
+
+#searchSection {
+    position: relative;
+}
+
+#searchVideoContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%; /* Adjust the width as needed */
+    max-width: 300px; /* Set a maximum width if necessary */
+    height: auto; /* Maintain aspect ratio */
+    background-color: #000000;
+}
+
+#searchVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the video covers the entire container */
+}
+
+#searchGifContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%; /* Adjust the width as needed */
+    max-width: 300px; /* Set a maximum width if necessary */
+    height: auto; /* Maintain aspect ratio */
+    background-color: transparent; /* Inherit the background color from the search div */
+}
+
+#searchGifContainer a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#particles-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Adjust the z-index as needed */
+}
+#main-content {
+    position: relative;
+    z-index: 2; /* Place the content above particles */
+    /* Add any other styles for your main content */
+}
+#main-content-side {
+    position: relative;
+    z-index: 2; /* Place the content above particles */
+    /* Add any other styles for your main content */
+}
+/* #channelName {
+    border: 2px solid #ffffff;
+    border-radius: 100px;
+
+} */
+
+/* #suggestion {
+flex: 1;
+background-color: #000000;
+overflow-y: auto;
+padding: 0px;
+color: #ffffff;
+margin-top: 0px;
+float: right; 
+width: 33%; 
+} */
+
+#searchBarContainer {
+    text-align: center;
+    margin-top: 50vh; /* Adjust as needed to center vertically */
+}
+
+#searchBarContainer.sidePanel {
+    text-align: left;
+    margin-top: 0;
+    margin-left: 20px; /* Adjust as needed to position in the side panel */
+}
+/* #searchResults {
+    display: none;
+} */
+    </style>
+    <!-- <link rel="stylesheet" href="{% static 'youtube.css' %}" /> -->
 </head>
 <body>
     <div id="container">
+    
         <div id="sidePanel">
+            <div id="main-content-side">
             <div id="logoContainer">
                 <img id="logo" src="https://i.ibb.co/F8y9jvc/images.png" alt="Logo" width="50" height="50">
                 <span id="logoText">VIDEO PLAYER</span>
@@ -23,59 +407,107 @@
                 </div>
             </form>
 
+        
             <ul id="searchResults"></ul>
-        </div>
+
+            <!-- <div id="searchVideoContainer"> -->
+                <!-- <video id="searchVideo" loop muted> -->
+                    <!-- Set a default placeholder video or leave it empty -->
+                    <!-- <source src=https://tenor.com/view/dayskomvis-gass-fox-detective-looking-for-something-gif-15275519 type="video/mp4"> -->
+                    <!-- Your browser does not support the video tag. -->
+                <!-- </video> -->
+                <!-- <div id="searchVideoContainer" class="tenor-gif-embed" data-postid="15275519" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/dayskomvis-gass-fox-detective-looking-for-something-gif-15275519"></a> <a href="https://tenor.com/search/dayskomvis-stickers"></a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script> -->
+            <!-- </div> -->
+            <!-- <div id="searchGifContainer" class="tenor-gif-embed" data-postid="15275519" data-share-method="host" data-aspect-ratio="1" data-width="100%">
+                <a href="https://tenor.com/view/dayskomvis-gass-fox-detective-looking-for-something-gif-15275519"></a>
+                <a href="https://tenor.com/search/dayskomvis-stickers"></a>
+            </div> -->
+            <div id="searchGifContainer" class="tenor-gif-embed" data-postid="10026013946105382068" data-share-method="host" data-aspect-ratio="1" data-width="100%">
+                <a href="https://tenor.com/view/what-looking-penguin-crowd-watching-gif-10026013946105382068"></a>
+                <a href="https://tenor.com/search/what-stickers"></a>
+            </div>
+            <!-- <div id="searchGifContainer" class="tenor-gif-embed" data-postid="22109170" data-share-method="host" data-aspect-ratio="1.77778" data-width="100%">
+                <a href="https://tenor.com/view/snowball-bunny-search-bingo-magnifying-glass-gif-22109170"></a>
+                <a href="https://tenor.com/search/snowball-gifs"></a>
+            </div> -->
+            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+      </div>
+    </div>
         <div id="mainPanel">
             <!-- <a href="{% url 'store_video' %}" id="profileLink" style="position: absolute; top: 10px; right: 10px; color: #ffffff; text-decoration: none;">
                 <img src="https://i.ibb.co/r6Ng54v/770079-people-512x512.png" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%;">
             </a> -->
-            <div id="profileDiv">
-
-                <!-- Profile icon (replace 'path-to-your-image' with the actual path to your profile picture) -->
-                <!-- <img src="https://i.ibb.co/r6Ng54v/770079-people-512x512.png" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;"> -->
-        
-                <!-- Text next to the profile icon -->
-                <a href="{% url 'store_video' %}" id="profileLink" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
-                    <!-- Text next to the profile icon -->
-                    <span id="profileName" style="margin-right: 5px;">{{ user_profile.name }}</span>
-
-                    <img src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px; margin-left: 5px;">
-                </a>
-            </div>
-            <div style="margin-top: 10px;">
-                <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
-            </div>
-            <!-- <div id="channelBox">
-                <span id="channelName"></span>
-            </div> -->
-            <div id="videoInfo">
-                <div id="channelBox">
-                    <span id="channelName"></span>
-                </div>
-                <div id="videoStats">
-                    <button id="likeButton" onclick="likeVideo(currentVideoId, like)">
-                        <span id="likeIcon">👍</span> <span id="likeCount">0</span>
-                    </button>
-                    <button id="dislikeButton" onclick="dislikeVideo(currentVideoId, dislike)">
-                        <span id="dislikeIcon">👎</span> <span id="dislikeCount">0</span>
-                    </button>
-                    <button id="playlistButton" onclick="addToPlaylist(currentVideoId)">
-                        <span id="playlistIcon">🎵</span> Playlist
-                    </button>
-                    <span id="viewsCount"  style="margin-left: 10px;">Views: 0</span>
-                </div>
+           
+            <div id="particles-container"></div>
+            <div id="main-content">
+                
+               
             
-            <div id="videoDetails">
-                <h2 id="videoTitle"></h2>
-                <p id="videoDescription"></p>
-            </div>
+                <div id="profileDiv">
+                    <!-- Profile icon (replace 'path-to-your-image' with the actual path to your profile picture) -->
+                    <!-- <img src="https://i.ibb.co/r6Ng54v/770079-people-512x512.png" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;"> -->
+                    <div id="profile_name">
+                        <span id="profileName" style="margin-right: 5px;">{{ user_profile.name }}</span>
+                    </div>
+               
+                    <!-- Text next to the profile icon -->
+                    <a href="{% url 'store_video' %}" id="profileLink" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                        <!-- Text next to the profile icon -->
+                        <!-- <span id="profileName" style="margin-right: 5px;">{{ user_profile.name }}</span> -->
+    
+                        <img src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px; margin-left: 5px;">
+                    </a>
+                  
+                </div>
+              
 
+                <!-- <div style="margin-top: 10px;">
+                 
+                    </video>
+                    <iframe id="videoPlayer1" src="D:\Set Go!!!.mp4" frameborder="0" allowfullscreen>
+                   
+                    </iframe>
+                </div> -->
+                <!-- <div style="margin-top: 10px;">
+                    <iframe id="videoPlayer1" src="https://player.vimeo.com/video/888246082?badge=0&amp;autopause=0&amp;quality_selector=1&amp;player_id=0&amp;app_id=58479&autoplay=1&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"  controls autoplay></iframe>
+                </div> -->
+                <div style="margin-top: 10px;">
+                    <iframe id="videoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"  controls autoplay></iframe>
+                </div>
+                <!-- <div id="channelBox">
+                    <span id="channelName"></span>
+                </div> -->
+                <div id="videoInfo">
+                    <div id = "channelBox">
+                        <span id="channelName"></span>
+                    </div>
+                    <div id="videoStats">
+                    
+                        <button id="likeButton" onclick="likeVideo(currentVideoId, like)">
+                            <span id="likeIcon">👍</span> <span id="likeCount">0</span>
+                        </button>
+                        <button id="dislikeButton" onclick="dislikeVideo(currentVideoId, dislike)">
+                            <span id="dislikeIcon">👎</span> <span id="dislikeCount">0</span>
+                        </button>
+                        <button id="playlistButton" onclick="addToPlaylist(currentVideoId)">
+                            <span id="playlistIcon">🎵</span> Playlist
+                        </button>
+                        <span id="viewsCount"  style="margin-left: 10px;" style="border: 2px white;">Views: 0</span>
+                    </div>
+                
+                <div id="videoDetails">
+                    <h2 id="videoTitle"></h2>
+                    <p id="videoDescription"></p>
+                </div>
+
+        </div>
         </div>
 
         <!-- <div id="suggestion">
             <h3 style="text-align: center;">Suggestions</h3>
         
         </div> -->
+      
 
         </div>
 
@@ -88,6 +520,24 @@
         let liked = false;
         let disliked = false;
 
+        // const queryParams = new URLSearchParams(window.location.search);
+        // const videoId = queryParams.get('video_id');
+        // console.log(videoId);
+        // playVideo(videoId);
+        function showSelectedVideo() {
+        // document.getElementById('videoPlayer1').style.display = 'block';
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.src = `https://player.vimeo.com/video/888246082?badge=0&amp;autopause=0&amp;quality_selector=1&amp;player_id=0&amp;app_id=58479&autoplay=1&loop=1`;
+        document.getElementById('searchGifContainer').style.display = 'block';
+        // document.getElementById('searchResults').style.display = 'none';
+        }
+
+        // Call playVideo with the default video ID
+        // const defaultVideoId = "YOUR_DEFAULT_VIDEO_ID"; // Replace with your default video ID
+        // playVideo(defaultVideoId);
+
+        // Add an event listener to call showSelectedVideo when the page loads
+        // document.addEventListener('DOMContentLoaded', showSelectedVideo);
 
         function searchVideos() {
             const query = document.getElementById('query').value;
@@ -104,8 +554,22 @@
             .then(response => response.json())
             .then(data => {
                 const searchResults = document.getElementById('searchResults');
+                // const searchBarContainer = document.getElementById('searchBarContainer');
+                // const searchGifContainer = document.getElementById('searchGifContainer');
+                // const searchVideo = document.getElementById('searchVideo');
                 searchResults.innerHTML = ''; // Clear search results before adding new ones
 
+                if (query.trim() === '') {
+                    // If the search bar is empty, show the video
+                    // searchBarContainer.classList.remove('sidePanel');
+                    // searchBarContainer.classList.remove('main-content-side');
+                    searchGifContainer.style.display = 'block';
+                } else {
+                    // If someone searches, hide the video
+                    // searchBarContainer.classList.add('sidePanel');
+                    // document.getElementById('videoPlayer1').style.display = 'none';
+                    searchGifContainer.style.display = 'none';
+                
                 data.results.forEach(video => {
                     const li = document.createElement('li');
                     // li.textContent = video.videoInfo.snippet.title;
@@ -120,9 +584,7 @@
                         // searchResults.style.display = 'none';
                         
                         // Call playVideo function to handle video playback
-                        playVideo(video.videoInfo.id, video.videoInfo.statistics.viewCount, video.videoInfo.statistics.likeCount, video.videoInfo.statistics.dislikeCount, video.videoInfo.snippet.title, video.videoInfo.snippet.description, video.videoInfo.snippet.channelTitle);
-                        document.getElementById('videoInfo').style.display = 'block';
-                        document.getElementById('videoDetails').style.display = 'block';
+                        playVideo(video.videoInfo.id);
                         // Optionally, you can reset the input field value after clicking a video
                         // document.getElementById('query').value = '';
                     });
@@ -130,16 +592,22 @@
                     li.appendChild(viewsDiv);
                     searchResults.appendChild(li);
                     });
+                }
                     })
+                
                     .catch(error => console.error('Error:', error));
                     }
 
 
-        function playVideo(videoId, viewsCount, likeCount, dislikeCount, title, description, channelName) {
+        function playVideo(videoId) {
+            // document.getElementById('videoPlayer').style.display = 'block';
+            console.log(videoId);
             const videoPlayer = document.getElementById('videoPlayer');
             videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
             currentVideoId = videoId; 
             updateVideoDataFromServer(videoId);
+            document.getElementById('videoInfo').style.display = 'block';
+            document.getElementById('videoDetails').style.display = 'block';
         //     views = viewsCount;
         //     like = likeCount;
         //     dislike = dislikeCount;
@@ -185,7 +653,17 @@
         //     dislikeButton.textContent = 'Dislike';
         //     likeButton.disabled = false;
         //     dislikeButton.disabled = false;
-        // }
+        }
+
+        const queryParams = new URLSearchParams(window.location.search);
+        const videoId_url = queryParams.get('video_id');
+        if (videoId_url) {
+            playVideo(videoId_url);
+        }
+        else{
+            document.addEventListener('DOMContentLoaded', showSelectedVideo);
+        }
+
     function updateVideoDataFromServer(videoId) {
         console.log(videoId);
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -243,7 +721,6 @@
         })
         .catch(error => console.error('Error:', error));
         }
-    }
 
     function updateViewsCount(view) {
             viewsCount += 1;
@@ -381,5 +858,119 @@
         .catch(error => console.error('Error:', error));
         }
     </script>
+
+<script>
+    particlesJS("particles-container", {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#BE5AA2"
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#4E8F94"
+                },
+                "polygon": {
+                    "nb_sides": 5
+                },
+                "image": {
+                    "src": "img/github.svg",
+                    "width": 100,
+                    "height": 100
+                }
+            },
+            "opacity": {
+                "value": 1,
+                "random": false,
+                "anim": {
+                    "enable": false,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3,
+                "random": true,
+                "anim": {
+                    "enable": false,
+                    "speed": 40,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#4E8F94",
+                "opacity": 0.9,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 6,
+                "direction": "none",
+                "random": false,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": false,
+                    "rotateX": 600,
+                    "rotateY": 1200
+                }
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "repulse"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 400,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
+    });
+</script>
+
 </body>
 </html>

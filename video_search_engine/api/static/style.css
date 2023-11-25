@@ -10,7 +10,7 @@ body {
   font-family: "Roboto", sans-serif;
 
   background-color: rgba(8, 8, 8, 0.89);
-  background-repeat: repeat;
+  /* background-repeat: repeat; */
 }
 
 .navbar {
@@ -75,10 +75,10 @@ body {
   justify-content: center;
   display: flex;
   background-position: center;
-  height: 1080px;
+  height: 720px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
     url(design.png) ;
-  background-repeat: repeat;
+  /* background-repeat: repeat; */
 }
 
 .area {

@@ -6,13 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'form.css' %}" />
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <!-- <link
       rel="icon"
       href="{% static 'assets/budget.png' %}"
       type="image/png"
     /> -->
 
-    <title>Finance Tracking App</title>
+    <title>SignUp page</title>
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
     <script type="module" src="config.js"></script>
@@ -25,22 +26,146 @@
             height: 100vh;
             /* background-color: #fff ; */
             /* background: url("https://i.ibb.co/8dgcLvP/transaction-bg1.jpg") ; */
-            background: url("https://i.ibb.co/VTLDz40/wp9223603-finance-4k-wallpapers.jpg") ;
-            backdrop-filter: blur(4px);
+            background-image: url("https://i.ibb.co/ZJpWTS2/2206-w026-n002-2110b-p1-2110.jpg") ;
+            background-size: cover;
+            background-position: center; 
+           background-repeat: repeat;
           }
 
-          .container {
+          /* .container {
             width: 100%;
-            padding: 20px;
+            padding: 30px;
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #7cc8fa;
-          }
+          } */
           .error-message {
         color: red;
         font-size: 14px;
         display: none; /* Initially hide the error message */
       }
+      #particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Adjust the z-index as needed */
+        }
+      #main-content {
+        /* position: relative; */
+        z-index: 2;
+        margin-top: 2px;
+        margin-bottom: 5px;/* Place the content above particles */
+        /* Add any other styles for your main content */
+    }
+
+    .container {
+    max-width: auto;
+    margin: 0 100px;
+    padding: 20px;
+  }
+     
+  h2 {
+    color: #5a5af3;
+    margin-bottom: 10px;
+  }
+  
+  .form {
+    width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    /* border: 2px solid #050000; */
+    /* border-radius: 20px; */
+    background-color: black;
+    opacity: 0.8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 60px;
+    box-shadow: #ccc;
+  }
+  
+  .form h2 {
+    text-align: center;
+    color: #5a5af3;
+  }
+  
+  .form p {
+    text-align: center;
+    color: #ffffff;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    background-color: #050000;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ffffff;
+    margin-top: 8px;
+    font-weight: 500;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-top: 4px;
+    height: 35px; 
+  }
+  
+  button[type="submit"] {
+    width: 40%;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #5a5af3;
+    color: white;
+    border: none;
+    border-radius: 150px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #4343d8;
+  }
+  
+  .error-message {
+    display: none;
+    color: red !important;
+    font-size: 14px;
+    margin-top: 15px !important;
+    margin-bottom: 0px !important;
+    font-weight: 600;
+  }
+  
+  .signup-link {
+    text-align: center;
+    margin-top: 20px !important;
+    margin-bottom: 5px;
+  }
+  
+  .signup-link a {
+    color: #5a5af3;
+    text-decoration: none;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+   
+  .form-signup {
+    margin-top: 150px;
+  }
       /* .hero_bg_box{
         width: 100%;
         position: absolute;
@@ -63,8 +188,10 @@
         </div>
       </div>
        -->
+       <div id="particles-container"></div>
+
+       <div id="main-content">
       <div class="form-signup">
-        */
         <form id="signup-form" class="form" action="" method="POST">
           {% csrf_token %}
           <h2>Sign Up</h2>
@@ -103,7 +230,120 @@
           </div>
           <button type="submit" id="signup-button">Sign Up</button>
         </form>
+        </div>  
 
+        <script>
+          particlesJS("particles-container", {
+              "particles": {
+                  "number": {
+                      "value": 100,
+                      "density": {
+                          "enable": true,
+                          "value_area": 800
+                      }
+                  },
+                  "color": {
+                      "value": "#4E8F94"
+                  },
+                  "shape": {
+                      "type": "circle",
+                      "stroke": {
+                          "width": 0,
+                          "color": "#4E8F94"
+                      },
+                      "polygon": {
+                          "nb_sides": 5
+                      },
+                      "image": {
+                          "src": "img/github.svg",
+                          "width": 100,
+                          "height": 100
+                      }
+                  },
+                  "opacity": {
+                      "value": 1,
+                      "random": false,
+                      "anim": {
+                          "enable": false,
+                          "speed": 1,
+                          "opacity_min": 0.1,
+                          "sync": false
+                      }
+                  },
+                  "size": {
+                      "value": 3,
+                      "random": true,
+                      "anim": {
+                          "enable": false,
+                          "speed": 40,
+                          "size_min": 0.1,
+                          "sync": false
+                      }
+                  },
+                  "line_linked": {
+                      "enable": true,
+                      "distance": 150,
+                      "color": "#4E8F94",
+                      "opacity": 0.9,
+                      "width": 1
+                  },
+                  "move": {
+                      "enable": true,
+                      "speed": 6,
+                      "direction": "none",
+                      "random": false,
+                      "straight": false,
+                      "out_mode": "out",
+                      "bounce": false,
+                      "attract": {
+                          "enable": false,
+                          "rotateX": 600,
+                          "rotateY": 1200
+                      }
+                  }
+              },
+              "interactivity": {
+                  "detect_on": "canvas",
+                  "events": {
+                      "onhover": {
+                          "enable": true,
+                          "mode": "repulse"
+                      },
+                      "onclick": {
+                          "enable": true,
+                          "mode": "push"
+                      },
+                      "resize": true
+                  },
+                  "modes": {
+                      "grab": {
+                          "distance": 400,
+                          "line_linked": {
+                              "opacity": 1
+                          }
+                      },
+                      "bubble": {
+                          "distance": 400,
+                          "size": 40,
+                          "duration": 2,
+                          "opacity": 8,
+                          "speed": 3
+                      },
+                      "repulse": {
+                          "distance": 200,
+                          "duration": 0.4
+                      },
+                      "push": {
+                          "particles_nb": 4
+                      },
+                      "remove": {
+                          "particles_nb": 2
+                      }
+                  }
+              },
+              "retina_detect": true
+          });
+      </script>
       <!-- </div>
       */ /*
     </div>
