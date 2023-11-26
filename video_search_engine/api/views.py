@@ -45,7 +45,8 @@ def generate_id(word):
     return hashlib.md5(word.encode()).hexdigest()
 
 def connect():
-    connect_string = "mongodb+srv://rishav_aich:rishav%402003@test.v0y4koj.mongodb.net/"
+    # connect_string = "mongodb+srv://rishav_aich:rishav%402003@test.v0y4koj.mongodb.net/"
+    connect_string = settings.MONGO_CONNECTION_STRING
     my_client = MongoClient(connect_string)
     # my_client = MongoClient('mongodb://localhost:27017/')
     # First define the database name
@@ -56,7 +57,8 @@ def connect():
 
     return collection_name
 
-def connect_user():
+def connect_user(): 
+    # connect_string = "mongodb+srv://rishav_aich:rishav%402003@test.v0y4koj.mongodb.net/"
     connect_string = settings.MONGO_CONNECTION_STRING
     my_client = MongoClient(connect_string)
     # my_client = MongoClient('mongodb://localhost:27017/')
@@ -172,6 +174,26 @@ def update_video_data(request):
                     dislike = int(result['videoInfo']['statistics']['dislikeCount'])
                     update = {'$set': {'videoInfo.statistics.dislikeCount': dislike+1}}
                     collection_name.update_one(query, update)
+
+                    query = {"user.Disliked_Videos": {"$in": [video_id]}}
+
+# Execute the query
+                    result_check = collection_name_user.find_one(query)
+                    # user_history
+
+                    if result_check is None:
+                        user_profile = MyUser.objects.get(username=request.user)
+                        print(user_profile.email)
+
+                        user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+                        print(collection_name_user)
+
+                        dislike = user_doc['user']['Disliked_Videos']
+                        dislike.append(video_id)
+
+                        update = {'$set': {'user.Disliked_Videos': dislike}}
+                        collection_name_user.update_one({'user.username': user_profile.username}, update)
+
                     graph.update_node(video_id,"dislikeCount")
 
                 video.views += 1  # Increment views for every interaction
@@ -244,6 +266,7 @@ def get_video_data(request, video_id):
     print(collection_name_user)
 
     history = user_doc['user']['History']
+    print(history)
     json_entry = {
         video_id : {
             "date_time": str(datetime.now()),
@@ -330,47 +353,51 @@ def upload_video_details(request):
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
-@require_GET
-def playlist(request, video_id, action):
-    print(1)
-    collection_name = connect()
-    collection_name_user = connect_user()
-    # Your logic to add/remove the video from playlists based on the action
-    # This function should handle adding/removing a video from playlists based on the video_id and action parameters
-    result = collection_name.find_one({'videoInfo.id': video_id})
-    query = {"user.playlist": {"$in": [video_id]}}
+# @require_GET
+# def playlist(request, video_id, action):
+#     print(1)
+#     # collection_name = connect()
+#     print(4)
+#     collection_name_user = connect_user()
+#     print(3)
+#     # Your logic to add/remove the video from playlists based on the action
+#     # This function should handle adding/removing a video from playlists based on the video_id and action parameters
+#     # result = collection_name.find_one({'videoInfo.id': video_id})
+#     query = {"user.playlist": {"$in": [video_id]}}
 
-# Execute the query
-    result_check = collection_name_user.find_one(query)
+# # Execute the query
+#     result_check = collection_name_user.find_one(query)
+#     print(result_check)
 
-    if action == 'add' and result_check is None:
-        user_profile = MyUser.objects.get(username=request.user)
-        print(user_profile.email)
+#     if action == 'add' and result_check is None:
+#         print(2)
+#         user_profile = MyUser.objects.get(username=request.user)
+#         print(user_profile.email)
 
-        user_doc = collection_name_user.find_one({'user.username': user_profile.username})
-        print(collection_name_user)
+#         user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+#         print(collection_name_user)
 
-        playlist = user_doc['user']['playlist']
-        playlist.append(video_id)
+#         playlist = user_doc['user']['playlist']
+#         playlist.append(video_id)
 
-        update = {'$set': {'user.playlist': playlist}}
-        collection_name_user.update_one({'user.username': user_profile.username}, update)
+#         update = {'$set': {'user.playlist': playlist}}
+#         collection_name_user.update_one({'user.username': user_profile.username}, update)
 
-    # if result:
-    #     statistics = result.get('videoInfo', {}).get('statistics', {})
-    #     playlist = statistics.get('playlistCount', 0)  # Default value is 0 if not found
+#     # if result:
+#     #     statistics = result.get('videoInfo', {}).get('statistics', {})
+#     #     playlist = statistics.get('playlistCount', 0)  # Default value is 0 if not found
 
-    #     if action == 'add':
-    #         new_playlist_count = playlist + 1
-    #         collection_name.update_one(
-    #             {'videoInfo.id': video_id},
-    #             {'$set': {'videoInfo.statistics.playlistCount': new_playlist_count}}
-    #         )
-            # Perform other operations if needed
+#     #     if action == 'add':
+#     #         new_playlist_count = playlist + 1
+#     #         collection_name.update_one(
+#     #             {'videoInfo.id': video_id},
+#     #             {'$set': {'videoInfo.statistics.playlistCount': new_playlist_count}}
+#     #         )
+#             # Perform other operations if needed
 
-        return JsonResponse({'success': True})
-    else:
-        return JsonResponse({'success': True, 'suggest': 'Video already in playlist'})
+#         return JsonResponse({'success': True})
+#     else:
+#         return JsonResponse({'success': True, 'suggest': 'Video already in playlist'})
 
 
 def login_user(request):
@@ -601,6 +628,7 @@ def playlist(request, video_id, action):
 
 # Execute the query
     result_check = collection_name_user.find_one(query)
+    print(result_check)
 
     if action == 'add' and result_check is None:
         user_profile = MyUser.objects.get(username=request.user)
@@ -697,6 +725,7 @@ def createpost(request):
                     "channel_id": channel_id,
                     "History": [],
                     "Liked_Videos": [],
+                    "Disliked_Videos": [],
                     "playlist": [],
                     "uploaded_videos": [],
                 }
@@ -721,11 +750,30 @@ def check_like(request, video_id):
     print(collection_name_user)
 
     like = user_doc['user']['Liked_Videos']
+    dislike = user_doc['user']['Disliked_Videos']
 
-    if video_id in like:
+    if video_id in like or video_id in dislike:
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False})
+
+
+# @require_GET
+# def check_dislike(request, video_id):
+#     collection_name_user = connect_user()
+#     user_profile = MyUser.objects.get(username=request.user)
+#     print(user_profile.email)
+
+#     user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+#     print(collection_name_user)
+
+#     dislike = user_doc['user']['Disliked_Videos']
+
+#     if video_id in dislike:
+#         return JsonResponse({'success': True})
+#     else:
+#         return JsonResponse({'success': False})
+    
 
 @require_GET
 def check_playlist(request, video_id):
@@ -851,19 +899,28 @@ def get_uploaded_videos(request, username):
 @require_GET
 def video_suggestion(request, videoID):
     collection_name = connect()
+    collection_name_user = connect_user()
     graph = Neo4j_Graph(collection_name)
     # if request.method=='GET':
     # videoID = request.POST.get('videoID', '')
-    print("HELLO")
+    # print("HELLO")
     list_of_suggestions = graph.get_suggestions(videoID)
-    print("HELLO2 0000")
+    # print("HELLO2 0000")
     # print(list_of_suggestions)
+    user_profile = MyUser.objects.get(username=request.user)
+    print(user_profile.email)
+
+    user_doc = collection_name_user.find_one({'user.username': user_profile.username})
+    print(collection_name_user)
+
+    dislike = user_doc['user']['Disliked_Videos']
+    print(dislike)
     
     suggest=[]
     for video_id in list_of_suggestions:
         # video = Video.objects.get(video_id=video_id)
         result = collection_name.find_one({'videoInfo.id': video_id})
-        if result not in suggest:
+        if result not in suggest and video_id not in dislike:
             suggest.append(result)
     # print(suggest)
     search_results = [
@@ -877,28 +934,28 @@ def video_suggestion(request, videoID):
     # Handle other HTTP methods or invalid requests
     # return JsonResponse({'error': 'Invalid request'}, status=400)
 
-@require_GET
-def favorite_video(request, video_id, action):
-    print(1)
-    collection_name = connect()
-    # Your logic to add/remove the video from favorites based on the action
-    # This function should handle adding/removing a video from favorites based on the video_id and action parameters
-    result = collection_name.find_one({'videoInfo.id': video_id})
-    if result:
-        statistics = result.get('videoInfo', {}).get('statistics', {})
-        favorite = statistics.get('favoriteCount', 0)  # Default value is 0 if not found
+# @require_GET
+# def favorite_video(request, video_id, action):
+#     print(1)
+#     collection_name = connect()
+#     # Your logic to add/remove the video from favorites based on the action
+#     # This function should handle adding/removing a video from favorites based on the video_id and action parameters
+#     result = collection_name.find_one({'videoInfo.id': video_id})
+#     if result:
+#         statistics = result.get('videoInfo', {}).get('statistics', {})
+#         favorite = statistics.get('favoriteCount', 0)  # Default value is 0 if not found
 
-        if action == 'add':
-            new_favorite_count = favorite + 1
-            collection_name.update_one(
-                {'videoInfo.id': video_id},
-                {'$set': {'videoInfo.statistics.favoriteCount': new_favorite_count}}
-            )
-            # Perform other operations if needed
+#         if action == 'add':
+#             new_favorite_count = favorite + 1
+#             collection_name.update_one(
+#                 {'videoInfo.id': video_id},
+#                 {'$set': {'videoInfo.statistics.favoriteCount': new_favorite_count}}
+#             )
+#             # Perform other operations if needed
 
-        return JsonResponse({'success': True})
-    else:
-        return JsonResponse({'success': False, 'error': 'Video not found'})
+#         return JsonResponse({'success': True})
+#     else:
+#         return JsonResponse({'success': False, 'error': 'Video not found'})
 
 # @require_GET
 # def home(request):

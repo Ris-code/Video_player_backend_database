@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import store_video, update_video_data, search_video, upload_video_details, get_video_data, home, createpost, login_user, playlist, check_like, check_playlist, frontpage, get_history, history_view, get_likes, get_playlist, like_view, playlist_view, get_uploaded_videos, uploaded_video_details
+from .views import store_video, update_video_data, search_video, upload_video_details, get_video_data, createpost, login_user, playlist, check_like, check_playlist, frontpage, get_history, history_view, get_likes, get_playlist, like_view, playlist_view, get_uploaded_videos, uploaded_video_details, video_suggestion
 
 urlpatterns = [
     path('', frontpage, name='frontpage'),
@@ -9,6 +9,7 @@ urlpatterns = [
     path('search_video/', search_video, name='search_video'),
     path('get_video_data/<str:video_id>/', get_video_data, name='get_video_data'),
     path('channel/', upload_video_details, name='upload_video_details'),
+    path('suggestions/<str:videoID>/', video_suggestion, name='suggestions'),
     path('signup/', createpost, name='signup'),
     path('login/', login_user, name='login'),
     path('playlist/<str:video_id>/<str:action>/', playlist, name='playlist'),

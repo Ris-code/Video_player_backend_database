@@ -363,7 +363,7 @@
 
 } */
 
-/* #suggestion {
+#suggestion {
 flex: 1;
 background-color: #000000;
 overflow-y: auto;
@@ -372,8 +372,16 @@ color: #ffffff;
 margin-top: 0px;
 float: right; 
 width: 33%; 
-} */
+}
 
+
+.suggestion-box {
+    border: 1px solid #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #ffffff;
+}
 #searchBarContainer {
     text-align: center;
     margin-top: 50vh; /* Adjust as needed to center vertically */
@@ -383,6 +391,24 @@ width: 33%;
     text-align: left;
     margin-top: 0;
     margin-left: 20px; /* Adjust as needed to position in the side panel */
+}
+
+.footer {
+    background-color: rgb(255, 115, 0);
+    text-decoration: none;
+    color: #ffffff;
+    border: 1px white;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+}
+.footer a {
+    text-decoration: none;
+    color: #ffffff;
+    padding: 10px;
+    border: 1px white;
+
 }
 /* #searchResults {
     display: none;
@@ -457,9 +483,11 @@ width: 33%;
     
                         <img src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px; margin-left: 5px;">
                     </a>
-                  
+
+                    <div class="footer">
+                        <a href="{% url 'login' %}" class="logout-button">Logout</a>
+                    </div>
                 </div>
-              
 
                 <!-- <div style="margin-top: 10px;">
                  
@@ -538,6 +566,14 @@ width: 33%;
 
         // Add an event listener to call showSelectedVideo when the page loads
         // document.addEventListener('DOMContentLoaded', showSelectedVideo);
+        const queryParams = new URLSearchParams(window.location.search);
+        const videoId_url = queryParams.get('video_id');
+        if (videoId_url) {
+            playVideo(videoId_url);
+        }
+        else{
+            document.addEventListener('DOMContentLoaded', showSelectedVideo);
+        }
 
         function searchVideos() {
             const query = document.getElementById('query').value;
@@ -564,7 +600,7 @@ width: 33%;
                     // searchBarContainer.classList.remove('sidePanel');
                     // searchBarContainer.classList.remove('main-content-side');
                     searchGifContainer.style.display = 'block';
-                } else {
+                } else{
                     // If someone searches, hide the video
                     // searchBarContainer.classList.add('sidePanel');
                     // document.getElementById('videoPlayer1').style.display = 'none';
@@ -656,14 +692,14 @@ width: 33%;
         //     dislikeButton.disabled = false;
         }
 
-        const queryParams = new URLSearchParams(window.location.search);
-        const videoId_url = queryParams.get('video_id');
-        if (videoId_url) {
-            playVideo(videoId_url);
-        }
-        else{
-            document.addEventListener('DOMContentLoaded', showSelectedVideo);
-        }
+        // const queryParams = new URLSearchParams(window.location.search);
+        // const videoId_url = queryParams.get('video_id');
+        // if (videoId_url) {
+        //     playVideo(videoId_url);
+        // }
+        // else{
+        //     document.addEventListener('DOMContentLoaded', showSelectedVideo);
+        // }
 
     function updateVideoDataFromServer(videoId) {
         console.log(videoId);
@@ -722,7 +758,7 @@ width: 33%;
         })
         .catch(error => console.error('Error:', error));
         }
-        
+
     function suggestions(videoID) {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
@@ -737,6 +773,7 @@ width: 33%;
         .then(data => {
             const searchResultsDiv = document.getElementById('searchResults');
             searchResultsDiv.innerHTML = ''; // Clear existing search results
+            searchGifContainer.style.display = 'none';
 
             if (data.suggestions.length === 0) {
                 const noSuggestions = document.createElement('div');
