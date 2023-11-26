@@ -89,6 +89,7 @@
 }
 
 #searchBar input[type="text"] {
+    display: flex;
     flex-grow: 1;
     border: none;
     outline: none;
@@ -101,6 +102,8 @@
     border: none;
     cursor: pointer;
     padding: 5px;
+    display: flex;
+    /* margin-right: 5px; */
 }
 
 #searchBar button:hover {
@@ -167,6 +170,8 @@
     border-radius: 5px; /* Rounded corners */
     margin: 10px 0;
     color: #ffffff;
+    background-color: #000000;
+    opacity: 0.7;
 }
 
 #videoDetails {
@@ -323,14 +328,33 @@
     object-fit: cover; /* Ensures the video covers the entire container */
 }
 
+/* #searchGifContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%; 
+    max-width: 300px; 
+    height: auto; 
+    background-color: transparent; 
+    border-radius: 50%;
+} */
+
+#searchGifContainer .tenor-gif-embed{
+    border-radius: 50%;
+}
+
 #searchGifContainer {
     position: absolute;
     top: 0;
     right: 0;
-    width: 30%; /* Adjust the width as needed */
-    max-width: 300px; /* Set a maximum width if necessary */
-    height: auto; /* Maintain aspect ratio */
-    background-color: transparent; /* Inherit the background color from the search div */
+    width: 30%; 
+    max-width: 300px; 
+    height: auto; 
+    background-color: black; 
+}
+
+#searchGifContainer .tenor-gif-embed {
+    border-radius: 50%;
 }
 
 #searchGifContainer a {
@@ -338,6 +362,12 @@
     width: 100%;
     height: 100%;
 }
+
+/* #searchGifContainer a {
+    display: block;
+    width: 100%;
+    height: 100%;
+} */
 
 #particles-container {
     position: absolute;
@@ -381,8 +411,11 @@ width: 33%;
     margin-bottom: 10px;
     border-radius: 5px;
     color: #ffffff;
+    background-color: #000000;
+    opacity: 0.7;
 }
 #searchBarContainer {
+    display: flex;
     text-align: center;
     margin-top: 50vh; /* Adjust as needed to center vertically */
 }
@@ -413,7 +446,72 @@ width: 33%;
 /* #searchResults {
     display: none;
 } */
-    </style>
+/* Hide scrollbar for Chrome, Safari and Opera */
+.searchResults::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.example {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#sidePanel::-webkit-scrollbar,
+#searchResults::-webkit-scrollbar {
+    width: 0;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#sidePanel.example,
+#searchResults.example {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Show scrollbar on hover for Firefox */
+#sidePanel:hover,
+#searchResults:hover {
+    scrollbar-color: transparent #ffffff;
+}
+
+.search-bar{
+    border:1px solid lightgray;
+    width:auto;
+    height:45px;
+    border-radius:30px;
+    display:flex;
+    align-items:center;
+    padding-left:15px;
+    background-color: #ffffff;
+}
+
+.search-bar:hover{
+    box-shadow: 0px 0px 4px 0px #b5b5b5;
+
+}
+
+.search-bar .material-icons{
+    font-size:18px;
+    color:gray;
+    margin-right: 15px;
+    cursor:pointer;
+}
+
+.search-bar input{
+    flex-grow:1;
+    height:30px;
+    margin-right:15px;
+    font-size:16px;
+    border:none;
+    justify-content:center;
+}
+
+.search-bar input:focus{
+    outline:none;
+}
+</style>
     <!-- <link rel="stylesheet" href="{% static 'youtube.css' %}" /> -->
 </head>
 <body>
@@ -425,12 +523,21 @@ width: 33%;
                 <img id="logo" src="https://i.ibb.co/F8y9jvc/images.png" alt="Logo" width="50" height="50">
                 <span id="logoText">VIDEO PLAYER</span>
             </div>
-            <form id="searchForm" action="{% url 'search_video' %}" method="post">
+            <form id="searchForm" action="{% url 'search_video' %}" method="post" onsubmit="searchVideos(); return false;">
                 {% csrf_token %}
                 <div id="searchBar">
                     <input type="text" id="query" name="query" placeholder="Search videos..." required>
-                    <button type="button" onclick="searchVideos()" style="font-size: 12px;">&#128269;</button>
+                    <!-- <button type="button" onclick="searchVideos()" style="font-size: 12px;">&#128269;</button> -->
+                    <button type="submit" style="font-size: 12px;">&#128269;</button>
                 </div>
+
+                <!-- <div class="search-bar">
+                  
+                    <input id="query" style="flex-grow:1;border:none;font-size:16px;height:30px;margin-right:15px;"  type="text" name="query" placeholder="Search videos ...">
+                 
+                    <button type="button" onclick="searchVideos()" style="font-size: 12px;">&#128269;</button>
+                </div> -->
+
             </form>
 
         
