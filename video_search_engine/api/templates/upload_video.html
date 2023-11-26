@@ -1,0 +1,161 @@
+<!-- <!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Page</title>
+    <link rel="stylesheet" href="{% static 'like_play.css' %}" />
+</head>
+
+<body>
+    <h1>Liked Videos</h1>
+
+    <div id="historyContainer"></div>
+
+    <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        const historyData = JSON.parse(queryParams.get('data'));
+
+        const historyContainer = document.getElementById('historyContainer');
+        historyData.forEach(video => {
+            console.log(video)
+            const videoBox = document.createElement('div');
+            videoBox.className = 'video-box';
+
+            const videoDetails = document.createElement('div');
+            videoDetails.className = 'video-details';
+            videoDetails.innerHTML = `
+                <h3>${video.title}</h3>
+            `;
+
+            videoBox.appendChild(videoDetails);
+            historyContainer.appendChild(videoBox);
+        });
+    </script>
+</body>
+
+</html> -->
+
+<!-- history_page.html -->
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liked Videos</title>
+    <!-- <link rel="stylesheet" href="{% static 'like_play.css' %}" /> -->
+
+    <style>
+        body {
+    /* background-color: black; */
+    background-image: url("https://r4.wallpaperflare.com/wallpaper/962/854/477/orb-abstract-3d-abstract-glowing-wallpaper-f8d61da860509cc8303ca1ee8802140a.jpg");
+    /* background-size:cover; */
+    background-position: center; 
+    background-repeat: repeat;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    z-index: 1;
+}
+/* <a href="https://ibb.co/vqfRP0q"><img src="https://i.ibb.co/H4R3z54/317167.jpg" alt="317167" border="0"></a> */
+.video-box {
+    border: 0px solid black;
+    border-radius: 10px;
+    /* padding: 5px; */
+    /* margin-bottom: 10px; */
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    /* z-index: 2; */
+}
+
+
+.video-details {
+    flex: 1;
+    z-index: 2;
+}
+
+h1 {
+    text-align: center;
+}
+
+#backButton {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    background-color: #ff0000; /* Set your desired background color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+#backButton:hover {
+    background-color: rgb(0, 79, 183); /* Set your desired hover color */
+}
+
+.video-details h3 {
+    color: rgb(255, 111, 0);
+    text-decoration: none;
+}
+.video-details a {
+    /* color: red; */
+    text-decoration: none;
+}
+
+/* #particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2; 
+            mask-repeat: repeat;
+        } */
+    </style>
+</head>
+
+<body>
+    <!-- Button to navigate back to the search_videos URL -->
+    <a href="{% url 'search_video' %}" id="backButton">
+        Back to Search
+    </a>
+
+    <h1>Uploaded Videos</h1>
+
+    <div id="historyContainer"></div>
+
+    <script>
+        // Extract data from the query parameter
+        const queryParams = new URLSearchParams(window.location.search);
+        const historyData = JSON.parse(queryParams.get('data'));
+        // Display history data (you can use your existing displayHistory logic here)
+        const historyContainer = document.getElementById('historyContainer');
+        historyData.forEach(video => {
+            console.log(video)
+            const videoBox = document.createElement('div');
+            videoBox.className = 'video-box';
+
+            const videoDetails = document.createElement('div');
+            videoDetails.className = 'video-details';
+            videoDetails.innerHTML = `
+            <a href="{% url 'search_video' %}?video_id=${video.id}">
+                    <h3>${video.title}</h3>
+            </a>
+            `;
+
+            videoBox.appendChild(videoDetails);
+            historyContainer.appendChild(videoBox);
+        });
+    </script>
+</body>
+
+</html>

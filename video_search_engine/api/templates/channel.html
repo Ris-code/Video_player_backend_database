@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 {% load static %}
 <html lang="en">
 
@@ -7,38 +7,393 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload JSON File and YouTube Video Details</title>
-    <link rel="stylesheet" href="{% static 'channel.css' %}" />
-</head>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- <link rel="stylesheet" href="{% static 'channel.css' %}" /> -->
 
+    <style>
+                body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            /* background-color: rgb(218, 68, 68); */
+            background-image: url("https://i.ibb.co/CV3jBBR/noe-skabar-noe-skabar-nyanmar-01.jpg");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        /* <a href="https://ibb.co/xztnhhx"><img src="https://i.ibb.co/CV3jBBR/noe-skabar-noe-skabar-nyanmar-01.jpg" alt="noe-skabar-noe-skabar-nyanmar-01" border="0"></a> */
+
+        h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            margin-left: 5px;
+            /* background-image: url("https://i.ibb.co/CV3jBBR/noe-skabar-noe-skabar-nyanmar-01.jpg");
+            background-size: cover;
+            background-position: center; */
+
+
+        }
+
+        .personal-details, .forms-container {
+            flex: 1;
+            margin: 20px;
+        }
+
+        .personal-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            background-color: transparent;
+            /* border: 2px solid #000000; */
+            border-radius: 8px;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 0px;
+            color: #ffffff;
+            width: 70%;
+        
+            margin-top: -50px;
+            font-size: 20px;
+            z-index: 2;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            object-fit: cover;
+        }
+
+        .forms-container {
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        
+        }
+
+        form {
+            width: 100%;
+            background-color: black;
+            padding: 20px;
+            border: 2px solid #ff6200;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            z-index: 2;
+        }
+
+        label{
+            color: #ffffff;
+        }
+        input,
+        textarea {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            background-color: black;
+            opacity: 0.8;
+            border: 1px white;
+            color: #ffffff;
+        
+        }
+
+        input[type="file"] {
+            border: none;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #ff6a00;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: rgb(244, 20, 4);
+        }
+
+        #jsonForm {
+            margin-top: 20px; 
+            color: #ffffff;
+        }
+
+        .personal-details p {
+            margin: 0px 0; 
+        }
+
+        .detail-box {
+            padding: 5px;
+            margin: 2px 0;
+            border: 1px solid #ff6200;
+            border-radius: 100px;
+            box-sizing: border-box;
+            width: 50%;
+            text-align: center;
+            background-color: #000000;
+            opacity: 0.8;
+            margin-bottom: 2px ;
+        }
+        /* 
+        .left-side > div {
+            margin-top: 20px; 
+            align-items: center;
+            text-align: center;
+        }
+
+        .left-side{
+            margin-top: -70px;
+            margin-bottom: 0px;
+            margin-right: 20px;
+            padding: 20px;
+            background-color: black;
+            text-align: center;
+            align-items: center;
+
+        } */
+
+        #text {
+            text-align: center;
+        }
+
+
+
+
+        #container .navigation-buttons {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #container .navigation-buttons button {
+            padding: 10px;
+            background-color: rgb(255, 0, 0);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px; 
+            margin-left: 5px;
+            margin-top: 30px;
+        }
+
+        #container .navigation-buttons button:hover {
+            background-color: #a0456f;
+        }
+
+        #particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Adjust the z-index as needed */
+        }
+
+        /* body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .navigation-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navigation-buttons button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .navigation-buttons button:hover {
+            background-color: #a0456f;
+        }
+
+        .left-side, .forms-container {
+            flex: 1;
+            margin: 20px;
+        }
+
+        .personal-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            background-color: black;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffffff;
+            width: 60%;
+            font-size: 20px;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            object-fit: cover;
+        }
+
+        .forms-container form {
+            width: 90%;
+            background-color: black;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #ffffff;
+        }
+
+        input,
+        textarea {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            color: #000000;
+        }
+
+        input[type="file"] {
+            border: none;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #a0456f;
+        }
+
+        #jsonForm {
+            margin-top: 20px;
+            color: #ffffff;
+        }
+
+        .detail-box {
+            padding: 5px;
+            margin: 2px 0;
+            border: 1px solid #ff0000;
+            border-radius: 100px;
+            box-sizing: border-box;
+            width: 70%;
+            text-align: center;
+            background-color: #000000;
+        }
+
+        .left-side > div {
+            margin-top: 20px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .left-side {
+            margin-top: -70px;
+            margin-bottom: 0px;
+            margin-right: 20px;
+            padding: 20px;
+            background-color: black;
+            text-align: center;
+            align-items: center;
+        }
+
+        #text {
+            text-align: center;
+        } */
+
+    </style>
+</head>
 <body>  
+   
     <div class="container">
-        <!-- Personal Details -->
-        <div class="left-side">
+        <div id="particles-container"></div>
+        <!-- <div class="left-side">
         <div id="text">
             <h2>Profile Details</h2>
-        </div>
+        </div> -->
         <div class="personal-details">
-            <!-- <div class="detail-box"> -->
+            <div id="text">
+                <h2>Profile Details</h2>
+            </div>
                 <img class="profile-photo" src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Photo">
-            <!-- </div> -->
+
             <div class="detail-box">
-                <p>Rishav Aich<p>
+                <p>{{ user_profile.name }}</p>
             </div>
             <div class="detail-box">
-                <p>aich@gmail.com</p>
+                <p>{{user_profile.email}}</p>
             </div>
             <div class="detail-box">
-                <p>Channel Name: CodeRev</p>
+                <p>{{user_profile.channel}}</p>
             </div>
            
+            <div class="navigation-buttons">
+                <button onclick="showHistory('{{ user_profile.username }}')">History</button>
+                <button onclick="showLikes('{{ user_profile.username }}')">Likes</button>
+                <button onclick="showPlaylist('{{ user_profile.username }}')">Playlist</button>
+                <button onclick="showUploadedVideos('{{ user_profile.username }}')">Uploaded Videos</button>
+            </div>
         </div>
-        </div>
-
-        <!-- Forms Container -->
+        <!-- </div> -->
+        
+   
         <div class="forms-container">
-            <!-- <h2>Upload JSON File or Enter YouTube Video Details</h2> -->
-
-            <!-- Upload JSON Form -->
+        
             <form id="jsonForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <label for="jsonFile">Upload a JSON file:</label>
@@ -47,7 +402,7 @@
                 <button type="button" onclick="uploadJSON()">Upload JSON File</button>
             </form>
 
-            <!-- Enter YouTube Video Details Form -->
+      
             <form id="youtubeForm">
                 <label for="videoId">YouTube Video ID:</label>
                 <input type="text" id="videoId" name="videoId" placeholder="Enter video ID" required>
@@ -68,7 +423,7 @@
 
     <script>
         function getCookie(name) {
-            // Function to get CSRF token from cookies
+      
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -84,7 +439,7 @@
         }
 
         function uploadJSON() {
-            // Function to upload JSON file
+    
             const fileInput = document.getElementById('jsonFile');
             const file = fileInput.files[0];
 
@@ -109,22 +464,21 @@
         }
 
         function uploadVideoDetails() {
-            // Function to upload YouTube video details
+    
             const videoId = document.getElementById('videoId').value;
             const tags = document.getElementById('tags').value;
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
 
-            // Add your logic to use the video details as needed (e.g., send to server)
             console.log('Video ID:', videoId);
             console.log('Tags:', tags);
             console.log('Title:', title);
             console.log('Description:', description);
 
-            const data = { videoId, tags, title, description }; // Add more data as needed
+            const data = { videoId, tags, title, description }; 
             const csrftoken = getCookie('csrftoken');
         
-            fetch('/channel/', { // Replace with your endpoint
+            fetch('/channel/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -136,7 +490,346 @@
             .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
         }
+
+        function showHistory(username) {
+            console.log(username);
+            fetch(`/get_history/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Redirect to history.html with the data as a query parameter
+                    window.location.href = `/history/?data=${JSON.stringify(data)}`;
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        }
+
+        // function displayHistory(historyData) {
+        //     console.log('History Data:', historyData);
+        //     const historyContainer = document.getElementById('historyContainer');
+        //     console.log('History Container:', historyContainer);
+        //     // historyContainer.innerHTML = ''; // Clear previous content
+
+        //     historyData.forEach(video => {
+        //         const videoBox = document.createElement('div');
+        //         videoBox.className = 'video-box';
+
+        //         const videoDetails = document.createElement('div');
+        //         videoDetails.className = 'video-details';
+        //         videoDetails.innerHTML = `
+        //             <h3>${video.title}</h3>
+        //             <p>Time: ${video.timing}</p>
+        //             <p>Day: ${video.Day}</p>
+        //         `;
+
+        //         videoBox.appendChild(videoDetails);
+        //         historyContainer.appendChild(videoBox);
+        //     });
+        // }
+    
+        function showLikes(username) {
+            console.log('Likes clicked');
+            console.log(username);
+            fetch(`/get_likes/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Redirect to history.html with the data as a query parameter
+                    window.location.href = `/likes/?data=${JSON.stringify(data)}`;
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        }
+
+
+        function showPlaylist(username) {
+            console.log('Playlist clicked');
+            console.log(username);
+            fetch(`/get_playlist/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Redirect to history.html with the data as a query parameter
+                    window.location.href = `/playlist/?data=${JSON.stringify(data)}`;
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        }
+
+        function showUploadedVideos(username) {
+            console.log('Uploaded Videos clicked');
+            console.log(username);
+            fetch(`/get_uploaded_videos/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Redirect to history.html with the data as a query parameter
+                    window.location.href = `/uploaded_videos/?data=${JSON.stringify(data)}`;
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        }
+    </script>
+
+    <script>
+        particlesJS("particles-container", {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ff6200"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#4E8F94"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 1,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#4E8F94",
+                    "opacity": 0.9,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
     </script>
 </body>
 
-</html>
+</html> 
+
+<!-- <!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload JSON File and YouTube Video Details</title>
+    <link rel="stylesheet" href="{% static 'channel.css' %}" />
+</head>
+
+<body>
+    <div class="container">
+      
+        <div class="left-side">
+            <div id="text">
+                <h2>Profile Details</h2>
+            </div>
+            <div class="personal-details">
+            
+                <img class="profile-photo"
+                    src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg"
+                    alt="Profile Photo">
+              
+                <div class="detail-box">
+                
+                    <p>{{ user_profile.name }}</p>
+                </div>
+                <div class="detail-box">
+                    <p>{{user_profile.email}}</p>
+                </div>
+                <div class="detail-box">
+                    <p>{{user_profile.channel}}</p>
+                </div>
+
+                <div class="navigation-buttons" style="margin-top: 10px;">
+                    <button onclick="navigateTo('History')">History</button>
+                    <button onclick="navigateTo('Likes')">Likes</button>
+                    <button onclick="navigateTo('Playlist')">Playlist</button>
+                </div>
+
+            </div>
+           
+        </div>
+
+        <div class="forms-container">
+         
+            <form id="jsonForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="jsonFile">Upload a JSON file:</label>
+                <input type="file" id="jsonFile" name="jsonFile" accept=".json" required>
+                <br>
+                <button type="button" onclick="uploadJSON()">Upload JSON File</button>
+            </form>
+
+            <form id="youtubeForm">
+                <label for="videoId">YouTube Video ID:</label>
+                <input type="text" id="videoId" name="videoId" placeholder="Enter video ID" required>
+                <br>
+                <label for="tags">Video Tags:</label>
+                <input type="text" id="tags" name="tags" placeholder="Enter video tags" required>
+                <br>
+                <label for="title">Video Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter video title" required>
+                <br>
+                <label for="description">Video Description:</label>
+                <textarea id="description" name="description" rows="4"
+                    placeholder="Enter video description" required></textarea>
+                <br>
+                <button type="button" onclick="uploadVideoDetails()">Upload Video Details</button>
+            </form>
+
+          
+        </div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+  
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function uploadJSON() {
+    
+            const fileInput = document.getElementById('jsonFile');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('jsonFile', file);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload/', true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        alert('JSON file uploaded successfully!');
+                    } else {
+                        alert('Error uploading JSON file!');
+                    }
+                };
+                xhr.send(formData);
+            } else {
+                alert('Please select a JSON file!');
+            }
+        }
+
+        function uploadVideoDetails() {
+       
+            const videoId = document.getElementById('videoId').value;
+            const tags = document.getElementById('tags').value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+
+            console.log('Video ID:', videoId);
+            console.log('Tags:', tags);
+            console.log('Title:', title);
+            console.log('Description:', description);
+
+            const data = { videoId, tags, title, description }; 
+            const csrftoken = getCookie('csrftoken');
+
+            fetch('/channel/', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function navigateTo(page) {
+            console.log(`Navigating to ${page}`);
+        }
+    </script>
+</body>
+
+</html> -->

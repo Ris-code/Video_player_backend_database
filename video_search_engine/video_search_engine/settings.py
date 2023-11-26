@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-oika!32&641f*h9)57jsln3@1#zpkl6r6q#gj^0l=l*7jw8+7r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    # 'rest_framework',
     'api',
 ]
 
@@ -105,15 +105,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#     ],
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ],
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -142,17 +142,18 @@ MONGO_CONNECTION_STRING = os.getenv('Connection_string')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
-    },
-    'Video': {
-        'ENGINE': 'django_mongodb_engine',
-        'NAME': 'Video',
-    },
-    'neo4j': {
-        'ENGINE': 'neo4django',
-        'NAME': 'http://localhost:7474/db/data/',
-        'TEST_NAME': 'test_neo4j_database',
+        'NAME': BASE_DIR / 'auth_db.sqlite3',
     },
 }
 
+# DATABASE_ROUTERS = [
+#     'video_search_engine.router.AuthRouter',
+#     'video_search_engine.router.AcmeAppRouter',
+# ]
+
 STATIC_URL = 'static/'
+AUTH_USER_MODEL = 'api.MyUser'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]

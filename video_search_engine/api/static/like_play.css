@@ -1,0 +1,55 @@
+body {
+    /* background-color: black; */
+    background-image: url("https://i.ibb.co/H4R3z54/317167.jpg");
+    background-size: cover;
+    background-position: center; 
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+/* <a href="https://ibb.co/vqfRP0q"><img src="https://i.ibb.co/H4R3z54/317167.jpg" alt="317167" border="0"></a> */
+.video-box {
+    border: 2px solid rgb(255, 0, 0);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.video-details {
+    flex: 1;
+}
+
+h1 {
+    text-align: center;
+}
+
+#backButton {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    background-color: #ff0000; /* Set your desired background color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+#backButton:hover {
+    background-color: rgb(0, 79, 183); /* Set your desired hover color */
+}
+
+.video-details h3 {
+    color: rgb(0, 234, 255);
+    text-decoration: none;
+}
+.video-details a {
+    /* color: red; */
+    text-decoration: none;
+}
