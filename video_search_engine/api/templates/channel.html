@@ -15,7 +15,7 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             /* background-color: rgb(218, 68, 68); */
-            background-image: url("https://i.ibb.co/CV3jBBR/noe-skabar-noe-skabar-nyanmar-01.jpg");
+            background-image: url("https://cdna.artstation.com/p/assets/images/images/014/536/354/large/noe-skabar-noe-skabar-nyanmar-01.jpg?1544392291");
             background-size: cover;
             background-position: center;
             display: flex;
@@ -374,7 +374,7 @@
             <div id="text">
                 <h2>Profile Details</h2>
             </div>
-                <img class="profile-photo" src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Photo">
+                <img class="profile-photo" src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1834466628.1701707542&semt=ais" alt="Profile Photo">
 
             <div class="detail-box">
                 <p>{{ user_profile.name }}</p>
@@ -491,8 +491,33 @@
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
+        .then(data => {
+            console.log(data);
+            // Clear the form fields
+            videoIdInput.value = '';
+            tagsInput.value = '';
+            titleInput.value = '';
+            descriptionInput.value = '';
+
+            // Display success message
+            const successMessage = document.createElement('p');
+            successMessage.innerHTML = 'Video details uploaded successfully!';
+            successMessage.style.color = '#00ff00'; // You can adjust the color
+
+            // Remove existing success messages
+            const existingSuccessMessages = document.querySelectorAll('.success-message');
+            existingSuccessMessages.forEach(message => message.remove());
+
+            document.querySelector('.forms-container').appendChild(successMessage);
+            successMessage.classList.add('success-message');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Display error message if needed
+        });
+            // .then(response => response.json())
+            // .then(data => console.log(data))
+            // .catch(error => console.error('Error:', error));
         }
 
         function showHistory(username) {

@@ -19,10 +19,11 @@
             background-image: url('https://r4.wallpaperflare.com/wallpaper/41/974/369/star-celestial-body-space-light-wallpaper-1910883d61facdab3647183f307116bd.jpg'); 
             background-size: cover; 
             background-position: center; 
-            background-repeat: no-repeat;
+            background-repeat: repeat;
             margin: 0;
             padding: 0;
             overflow: hidden;
+            /* opacity: 0.8; */
         }
 
         .container {
@@ -130,6 +131,7 @@
     padding: 20px;
     overflow-y: auto;
     margin-top: 0px;
+    /* opacity: 0.8; */
 }
 
 #videoPlayer {
@@ -520,7 +522,7 @@ width: 33%;
         <div id="sidePanel">
             <div id="main-content-side">
             <div id="logoContainer">
-                <img id="logo" src="https://i.ibb.co/F8y9jvc/images.png" alt="Logo" width="50" height="50">
+                <img id="logo" src="https://as1.ftcdn.net/v2/jpg/01/76/88/14/1000_F_176881477_ND0B3Ee1XE1VLy8nI6nfGhOxt1nELY1Z.jpg" alt="Logo" width="50" height="50">
                 <span id="logoText">VIDEO PLAYER</span>
             </div>
             <form id="searchForm" action="{% url 'search_video' %}" method="post" onsubmit="searchVideos(); return false;">
@@ -588,7 +590,7 @@ width: 33%;
                         <!-- Text next to the profile icon -->
                         <!-- <span id="profileName" style="margin-right: 5px;">{{ user_profile.name }}</span> -->
     
-                        <img src="https://i.ibb.co/vdk5Q7f/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137.jpg" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px; margin-left: 5px;">
+                        <img src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1834466628.1701707542&semt=ais" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px; margin-left: 5px;">
                     </a>
 
                     <div class="footer">
