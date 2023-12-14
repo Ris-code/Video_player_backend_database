@@ -44,3 +44,12 @@ python manage.py runserver
 - In the .env file store it in a variable name ```Connection_string```
 - Now from the profile section of our application you can upload this [test video data](video_search_engine/api/test) from upload json option
 
+### To setup Neo4J
+
+- Navigate to code file [video_graph.py](video_search_engine/api/video_graph.py)
+- Connect with neo4j in your localhost using database name and password
+- Create an object of class Neo4j_Graph and then call the following mentioned functions in order
+  - ```create_node``` - for creating nodes in neo4j graph for all videos in test_data 
+  - ```make_connections``` - for creating connection of all vidoes in test_data
+- This will create the relationship between the nodes
+- *Note : Building relationship between the nodes in neo4j will take some time
