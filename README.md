@@ -1,5 +1,8 @@
 # Video Player
 
+## Demo Video of the application
+[Demo Video](https://drive.google.com/file/d/1xYjWtHXtbQzt_JXsIeXxIG1DCoaUsJ0k/view?usp=sharing)
+
 ## Setup
 
 ### Clone the repository
@@ -39,4 +42,5 @@ python manage.py runserver
 - Create a .env file
 - Get the connection string from your localhost mongoDB or cloud hosted mongoDB
 - In the .env file store it in a variable name ```Connection_string```
+- Now from the profile section of our application you can upload this [test video data](video_search_engine/api/test) from upload json option
 
