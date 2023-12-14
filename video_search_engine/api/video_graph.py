@@ -3,10 +3,14 @@ from neo4j import GraphDatabase
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 nltk.download('stopwords')
 nltk.download('punkt')
-connect_string = "mongodb+srv://rishav_aich:rishav%402003@test.v0y4koj.mongodb.net/"
+connect_string = os.getenv('Connection_string')
 my_client = MongoClient(connect_string)
 
 
