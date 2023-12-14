@@ -34,4 +34,9 @@ pipenv install
 python manage.py runserver
 ```
 
+### To setup mongoDB
+
+- Create a .env file
+- Get the connection string from your localhost mongoDB or cloud hosted mongoDB
+- In the .env file store it in a variable name ```Connection_string```
 
