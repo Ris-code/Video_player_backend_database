@@ -22,4 +22,16 @@ pip3 install pipenv
 pipenv shell
 ```
 
+### Install the dependencies
+```bash
+pipenv install
+```
+
+#### Get into the directory having manage.py
+
+### Run the server
+```bash
+python manage.py runserver
+```
+
 
